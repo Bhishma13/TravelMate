@@ -1,0 +1,4 @@
+/* Reset or minimal styles if needed, mostly doing everything in index.css for simplicity now */
+.app-container {
+  width: 100%;
+}

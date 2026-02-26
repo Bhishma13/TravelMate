@@ -1,0 +1,25 @@
+# Node
+node_modules/
+dist/
+build/
+.env
+
+# Maven/Spring Boot
+target/
+*.jar
+*.war
+*.ear
+*.log
+.mvn/
+
+# IDEs
+.idea/
+.vscode/
+*.swp
+*.iml
+.classpath
+.project
+.settings/
+
+# macOS
+.DS_Store
