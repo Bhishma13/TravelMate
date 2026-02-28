@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { updateTravelerProfile } from '../services/api';
+import { useAuth } from '../context/AuthContext';
 
 function TravelerProfileForm({ userId, initialData, onComplete }) {
+    const { updateUser } = useAuth();
     const [formData, setFormData] = useState({
         location: initialData?.location || '',
         requesting: initialData?.requesting || '',
@@ -21,6 +23,9 @@ function TravelerProfileForm({ userId, initialData, onComplete }) {
         setError(null);
         try {
             await updateTravelerProfile({ userId, ...formData });
+            if (updateUser) {
+                updateUser({ profileCompleted: true });
+            }
             if (onComplete) onComplete();
         } catch (err) {
             setError(err.message);

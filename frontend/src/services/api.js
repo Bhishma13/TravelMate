@@ -87,3 +87,47 @@ export const getTravelerProfile = async (userId) => {
     }
     return response.json();
 };
+
+export const createBookingRequest = async (bookingData) => {
+    const response = await fetch(`${BASE_URL}/bookings/request`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(bookingData),
+    });
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to send booking request');
+    }
+    return response.json();
+};
+
+export const getGuideRequests = async (guideId) => {
+    const response = await fetch(`${BASE_URL}/bookings/guide/${guideId}`);
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to fetch guide requests');
+    }
+    return response.json();
+};
+
+export const getTravelerRequests = async (travelerId) => {
+    const response = await fetch(`${BASE_URL}/bookings/traveler/${travelerId}`);
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to fetch traveler bookgings');
+    }
+    return response.json();
+};
+
+export const updateBookingStatus = async (requestId, status) => {
+    const response = await fetch(`${BASE_URL}/bookings/request/${requestId}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+    });
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to update status');
+    }
+    return response.json();
+};

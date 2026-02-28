@@ -1,15 +1,12 @@
 import React from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 
-import GuideProfileForm from '../components/GuideProfileForm';
-import TravelerProfileForm from '../components/TravelerProfileForm';
-
-import { getGuideProfile, getTravelerProfile, getUsersByRole } from '../services/api';
+import { getGuideProfile, getTravelerProfile, getUsersByRole, getGuideRequests } from '../services/api';
 
 function Dashboard() {
     const { user, logout } = useAuth();
-    const [showProfileForm, setShowProfileForm] = React.useState(false);
+    const navigate = useNavigate();
     const [showProfileView, setShowProfileView] = React.useState(false);
     const [guideProfile, setGuideProfile] = React.useState(null);
     const [travelerProfile, setTravelerProfile] = React.useState(null);
@@ -18,6 +15,7 @@ function Dashboard() {
     const [totalPages, setTotalPages] = React.useState(0);
     const [searchTerm, setSearchTerm] = React.useState('');
     const [activeSearch, setActiveSearch] = React.useState('');
+    const [isLoading, setIsLoading] = React.useState(true);
 
     // Fetch profile data when opening the profile view
     // Fetch profile data when opening the profile view
@@ -37,13 +35,15 @@ function Dashboard() {
 
     React.useEffect(() => {
         if (user) {
+            setIsLoading(true);
             const roleToFetch = user.role === 'guide' ? 'traveler' : 'guide';
             getUsersByRole(roleToFetch, currentPage, 10, activeSearch) // Size 10
                 .then(data => {
                     setDataToShow(data.content);
                     setTotalPages(data.totalPages);
                 })
-                .catch(err => console.error(`Failed to load ${roleToFetch}s`, err));
+                .catch(err => console.error(`Failed to load ${roleToFetch}s`, err))
+                .finally(() => setIsLoading(false));
         }
     }, [user, currentPage, activeSearch]);
 
@@ -62,70 +62,63 @@ function Dashboard() {
 
     return (
         <div className="dashboard-container">
-            <header className="dashboard-header">
-                <div className="header-left">
-                    <h1>Welcome, {user.name} ({user.role})</h1>
+            <header className="dashboard-header" style={{ display: 'grid', gridTemplateColumns: 'minmax(200px, 1fr) auto minmax(200px, 1fr)', alignItems: 'center', gap: '1rem' }}>
+                <div className="header-left" style={{ textAlign: 'left' }}>
+                    <h1 style={{ margin: 0, fontSize: '1.5rem', whiteSpace: 'nowrap' }}>Welcome, {user.name}</h1>
                 </div>
 
-                <div className="header-right" style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
-                    {(!user.profileCompleted ? (
+                <div className="header-center" style={{ display: 'flex', justifyContent: 'center' }}>
+                    <form onSubmit={handleSearchSubmit} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', width: '350px' }}>
+                        <input
+                            type="text"
+                            placeholder={isGuide ? "Search travelers... e.g. Delhi" : "Search guides... e.g. Delhi"}
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                            style={{ padding: '0.6rem 1.2rem', borderRadius: '25px', border: '1px solid rgba(255,255,255,0.2)', width: '100%', fontSize: '0.9rem', outline: 'none', background: 'rgba(0,0,0,0.2)', color: 'white' }}
+                        />
+                        <button type="submit" className="cta-button" style={{ margin: 0, padding: '0.5rem 1.2rem', fontSize: '0.9rem', width: 'max-content', minWidth: '100px', borderRadius: '25px' }}>Search</button>
+                    </form>
+                </div>
+
+                <div className="header-right" style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', alignItems: 'center' }}>
+                    {isGuide ? (
                         <button
-                            onClick={() => setShowProfileForm(!showProfileForm)}
+                            onClick={() => navigate('/requests')}
+                            className="cta-button"
+                            style={{ margin: 0, fontSize: '0.9rem', padding: '0.5rem 1rem', background: '#ffb300', color: '#000' }}
+                        >
+                            Booking Requests
+                        </button>
+                    ) : (
+                        <button
+                            onClick={() => navigate('/my-bookings')}
+                            className="cta-button"
+                            style={{ margin: 0, fontSize: '0.9rem', padding: '0.5rem 1rem', background: '#4CAF50' }}
+                        >
+                            My Bookings
+                        </button>
+                    )}
+
+                    {!user.profileCompleted ? (
+                        <button
+                            onClick={() => navigate('/profile')}
                             className="cta-button"
                             style={{ margin: 0, fontSize: '0.9rem', padding: '0.5rem 1rem' }}
                         >
-                            {showProfileForm ? 'Close Form' : 'Complete Profile'}
+                            Complete Profile
                         </button>
                     ) : (
-                        showProfileForm ? (
-                            <button
-                                onClick={() => {
-                                    setShowProfileForm(false);
-                                    setShowProfileView(true);
-                                }}
-                                className="cta-button"
-                                style={{ margin: 0, fontSize: '0.9rem', padding: '0.5rem 1rem', background: '#e0e0e0', color: '#333' }}
-                            >
-                                Cancel Edit
-                            </button>
-                        ) : (
-                            <button
-                                onClick={() => setShowProfileView(!showProfileView)}
-                                className="cta-button"
-                                style={{ margin: 0, fontSize: '0.9rem', padding: '0.5rem 1rem', background: 'linear-gradient(90deg, var(--primary-color), #4FC3F7)' }}
-                            >
-                                {showProfileView ? 'Close Profile' : 'User Profile'}
-                            </button>
-                        )
-                    ))}
+                        <button
+                            onClick={() => setShowProfileView(!showProfileView)}
+                            className="cta-button"
+                            style={{ margin: 0, fontSize: '0.9rem', padding: '0.5rem 1rem', background: 'linear-gradient(90deg, var(--primary-color), #4FC3F7)' }}
+                        >
+                            {showProfileView ? 'Close Profile' : 'User Profile'}
+                        </button>
+                    )}
                     <button onClick={logout} className="logout-btn" style={{ margin: 0 }}>Logout</button>
                 </div>
             </header>
-
-            {/* Profile Creation Form */}
-            {showProfileForm && (
-                <div style={{ marginBottom: '2rem' }}>
-                    {isGuide ? (
-                        <GuideProfileForm
-                            userId={user.id}
-                            initialData={guideProfile}
-                            onComplete={() => {
-                                setShowProfileForm(false);
-                                setShowProfileView(true);
-                            }}
-                        />
-                    ) : (
-                        <TravelerProfileForm
-                            userId={user.id}
-                            initialData={travelerProfile}
-                            onComplete={() => {
-                                setShowProfileForm(false);
-                                setShowProfileView(true);
-                            }}
-                        />
-                    )}
-                </div>
-            )}
 
             {/* User Profile View Modal/Section */}
             {showProfileView && (isGuide ? guideProfile : travelerProfile) && (
@@ -143,9 +136,9 @@ function Dashboard() {
                         <button
                             onClick={() => {
                                 setShowProfileView(false);
-                                setShowProfileForm(true);
+                                navigate('/profile');
                             }}
-                            style={{ fontSize: '0.8rem', padding: '0.3rem 0.8rem', background: '#FFFFFF', color: 'var(--primary-color)', border: '1px solid var(--primary-color)' }}
+                            style={{ fontSize: '0.8rem', padding: '0.3rem 0.8rem', background: '#FFFFFF', color: '#000000', border: '1px solid #000000', cursor: 'pointer', fontWeight: 'bold' }}
                         >
                             Edit Profile
                         </button>
@@ -179,48 +172,74 @@ function Dashboard() {
                 </div>
             )}
 
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                <h2>{title}</h2>
-                <form onSubmit={handleSearchSubmit} style={{ display: 'flex', gap: '0.5rem' }}>
-                    <input
-                        type="text"
-                        placeholder={isGuide ? "Search travelers by location... e.g. Delhi" : "Search guides by location... e.g. Delhi"}
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        style={{ padding: '0.5rem', borderRadius: '5px', border: '1px solid #ccc', minWidth: '250px' }}
-                    />
-                    <button type="submit" className="cta-button" style={{ margin: 0, padding: '0.5rem 1rem' }}>Search</button>
-                </form>
-            </div>
+            {/* User Profile View Modal/Section */}
+
+            <h2 style={{ textAlign: 'left', marginBottom: '1.5rem' }}>{title}</h2>
 
             <div className="cards-grid">
-                {dataToShow.map((item) => (
-                    <div key={item.id} className="card">
-                        <img src={item.image} alt={item.name} className="avatar" />
-                        <div className="card-content">
-                            <h3>{item.name}</h3>
-                            <p><strong>Location:</strong> {item.location}</p>
-
-                            {isGuide ? (
-                                <>
-                                    <p><strong>Requesting:</strong> {item.requesting}</p>
-                                    <p><strong>Date:</strong> {item.date}</p>
-                                    <p><strong>Budget:</strong> {item.budget}</p>
-                                </>
-                            ) : (
-                                <>
-                                    <p><strong>Experience:</strong> {item.experience}</p>
-                                    <p><strong>Rating:</strong> ⭐ {item.rating}</p>
-                                    <p className="about">"{item.about}"</p>
-                                </>
-                            )}
-
-                            <button className="connect-btn">
-                                {isGuide ? 'Offer to Guide' : 'Contact Guide'}
-                            </button>
-                        </div>
+                {isLoading ? (
+                    // Render 6 skeleton cards while waiting for data
+                    Array.from({ length: 6 }).map((_, index) => (
+                        <div key={index} className="skeleton-card"></div>
+                    ))
+                ) : dataToShow.length === 0 ? (
+                    // Beautiful Empty State Design
+                    <div className="empty-state">
+                        <div style={{ fontSize: '4rem', marginBottom: '1rem', opacity: 0.5 }}>🏜️</div>
+                        <h3 style={{ fontSize: '1.5rem', color: '#fff', marginBottom: '0.5rem' }}>No profiles found</h3>
+                        <p style={{ maxWidth: '400px', margin: '0 auto 2rem auto', lineHeight: '1.6' }}>
+                            We couldn't find anyone matching "{activeSearch}". Try adjusting your location or checking back later.
+                        </p>
+                        <button
+                            className="cta-button"
+                            style={{ width: 'max-content', padding: '0.6rem 1.5rem', background: 'transparent', border: '1px solid #fff', color: '#fff' }}
+                            onClick={() => {
+                                setSearchTerm('');
+                                setActiveSearch('');
+                            }}
+                        >
+                            Clear Search
+                        </button>
                     </div>
-                ))}
+                ) : (
+                    dataToShow.map((item) => (
+                        <div key={item.id} className="card">
+                            <img src={item.image} alt={item.name} className="avatar" />
+                            <div className="card-content">
+                                <h3>{item.name}</h3>
+                                <p><strong>Location:</strong> {item.location}</p>
+
+                                {isGuide ? (
+                                    <>
+                                        <p><strong>Requesting:</strong> {item.requesting}</p>
+                                        <p><strong>Date:</strong> {item.date}</p>
+                                        <p><strong>Budget:</strong> {item.budget}</p>
+                                    </>
+                                ) : (
+                                    <>
+                                        <p><strong>Experience:</strong> {item.experience}</p>
+                                        <p><strong>Rating:</strong> ⭐ {item.rating}</p>
+                                        <p className="about">"{item.about}"</p>
+                                    </>
+                                )}
+
+                                <button
+                                    className="connect-btn"
+                                    onClick={() => {
+                                        if (!user.profileCompleted) {
+                                            alert("Please complete your profile before sending requests!");
+                                            navigate('/profile');
+                                        } else {
+                                            navigate(`/book/${item.id}`, { state: { guideName: item.name } });
+                                        }
+                                    }}
+                                >
+                                    {isGuide ? 'Offer to Guide' : 'Contact Guide'}
+                                </button>
+                            </div>
+                        </div>
+                    ))
+                )}
             </div>
 
             {totalPages > 1 && (
