@@ -45,38 +45,3 @@ To test TravelMate out on your own machine, follow these simple steps to run the
 * **Java** (JDK 17+)
 * **Maven** (optional, the project includes a `mvnw` wrapper)
 
-### 1. Start the Spring Boot Backend
-The backend runs on `localhost:8080`.
-
-```bash
-# Navigate to the backend directory
-cd backend
-
-# Build and start the Spring Boot application using the Maven wrapper
-./mvnw spring-boot:run
-```
-
-### 2. Start the React Frontend
-The frontend runs on `localhost:5173`.
-
-```bash
-# Open a new terminal window/tab and navigate to the frontend directory
-cd frontend
-
-# Install Node dependencies
-npm install
-
-# Start the Vite development server
-npm run dev
-```
-
-## 📸 Screenshots
-
-*(Feel free to upload screenshots to your `assets` folder and include them here to show off your UI!)*
-
-## 🤝 Contributing
-
-Contributions, issues, and feature requests are welcome! Build out new profile fields, wire up a real PostgreSQL production database, or add a direct messaging system. The sky is the limit!
-
----
-*Built with ❤️ for better travel experiences.*
