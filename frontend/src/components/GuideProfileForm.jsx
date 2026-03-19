@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { updateProfile } from '../services/api';
+import { updateProfile, enhanceProfile } from '../services/api';
 
 import { useAuth } from '../context/AuthContext';
 
@@ -12,6 +12,24 @@ function GuideProfileForm({ userId, onComplete, initialData }) {
     });
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
+    const [isEnhancing, setIsEnhancing] = useState(false);
+
+    const handleEnhance = async () => {
+        if (!formData.about || formData.about.trim().length < 5) {
+            setError("Please type a few keywords in the 'About You' box first to use AI.");
+            return;
+        }
+        setIsEnhancing(true);
+        setError('');
+        try {
+            const enhancedText = await enhanceProfile(formData.about);
+            setFormData(prev => ({ ...prev, about: enhancedText }));
+        } catch (err) {
+            setError(err.message || "Failed to enhance profile. Please try again.");
+        } finally {
+            setIsEnhancing(false);
+        }
+    };
 
     const handleChange = (e) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -66,7 +84,18 @@ function GuideProfileForm({ userId, onComplete, initialData }) {
                 </div>
 
                 <div className="form-group">
-                    <label>About You:</label>
+                    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', marginBottom: '0.5rem' }}>
+                        <label style={{ margin: 0 }}>About You:</label>
+                        <button
+                            type="button"
+                            onClick={handleEnhance}
+                            disabled={isEnhancing}
+                            className="btn-accent"
+                            style={{ padding: '0.4rem 0.8rem', fontSize: '0.85rem', borderRadius: '50px', background: 'transparent' }}
+                        >
+                            {isEnhancing ? '✨ Enhancing...' : '✨ Enhance with AI'}
+                        </button>
+                    </div>
                     <textarea
                         name="about"
                         value={formData.about}

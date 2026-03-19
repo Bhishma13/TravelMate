@@ -119,15 +119,130 @@ export const getTravelerRequests = async (travelerId) => {
     return response.json();
 };
 
-export const updateBookingStatus = async (requestId, status) => {
+export const updateBookingStatus = async (requestId, status, cancellationReason = null) => {
+    const payload = { status };
+    if (cancellationReason) payload.cancellationReason = cancellationReason;
     const response = await fetch(`${BASE_URL}/bookings/request/${requestId}/status`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ status })
+        body: JSON.stringify(payload)
     });
     if (!response.ok) {
         const errorText = await response.text();
         throw new Error(errorText || 'Failed to update status');
     }
     return response.json();
+};
+
+export const createReview = async (reviewData) => {
+    const response = await fetch(`${BASE_URL}/reviews`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(reviewData)
+    });
+    if (!response.ok) {
+        let errorText = 'Failed to submit review';
+        try {
+            const errJson = await response.json();
+            if (errJson.error) errorText = errJson.error;
+        } catch (e) {
+            errorText = await response.text();
+        }
+        throw new Error(errorText);
+    }
+    return response.json();
+};
+
+export const getGuideReviews = async (guideId) => {
+    const response = await fetch(`${BASE_URL}/reviews/guide/${guideId}`);
+    if (!response.ok) {
+        let errorText = 'Failed to fetch reviews';
+        try {
+            const errJson = await response.json();
+            if (errJson.error) errorText = errJson.error;
+        } catch (e) {
+            errorText = await response.text();
+        }
+        throw new Error(errorText);
+    }
+    return response.json();
+};
+
+export const getChatHistory = async (bookingRequestId, userId) => {
+    const response = await fetch(`${BASE_URL}/messages/${bookingRequestId}?userId=${userId}`);
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to fetch chat history');
+    }
+    return response.json();
+};
+
+export const createTripPost = async (postData) => {
+    const response = await fetch(`${BASE_URL}/posts`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(postData)
+    });
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to create trip post');
+    }
+    return response.json();
+};
+
+export const getTravelerPosts = async (travelerId) => {
+    const response = await fetch(`${BASE_URL}/posts/traveler/${travelerId}`);
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to fetch traveler posts');
+    }
+    return response.json();
+};
+
+export const getOpenBoardPosts = async () => {
+    const response = await fetch(`${BASE_URL}/posts/board`);
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to fetch open board posts');
+    }
+    return response.json();
+};
+
+export const updateTripPostStatus = async (postId, status) => {
+    const response = await fetch(`${BASE_URL}/posts/${postId}/status`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ status })
+    });
+    if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || 'Failed to update post status');
+    }
+    return response.json();
+};
+
+export const enhanceProfile = async (text) => {
+    const response = await fetch(`${BASE_URL}/ai/enhance-profile`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+    });
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.error || 'Failed to enhance profile with AI');
+    }
+    return data.enhancedText;
+};
+
+export const enhanceTrip = async (text) => {
+    const response = await fetch(`${BASE_URL}/ai/enhance-trip`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text })
+    });
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.error || 'Failed to enhance trip description with AI');
+    }
+    return data.enhancedText;
 };

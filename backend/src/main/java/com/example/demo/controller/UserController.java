@@ -6,6 +6,8 @@ import com.example.demo.model.User;
 import com.example.demo.repository.GuideProfileRepository;
 import com.example.demo.repository.TravelerProfileRepository;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.repository.ReviewRepository;
+import com.example.demo.model.Review;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -33,6 +35,9 @@ public class UserController {
 
     @Autowired
     private TravelerProfileRepository travelerProfileRepository;
+
+    @Autowired
+    private ReviewRepository reviewRepository;
 
     @GetMapping
     public ResponseEntity<?> getUsersByRole(
@@ -77,28 +82,39 @@ public class UserController {
                     userData.put("location", profile.get().getLocation());
                     userData.put("experience", profile.get().getExperience());
                     userData.put("about", profile.get().getAbout());
-                    userData.put("rating", profile.get().getRating());
                     userData.put("image", profile.get().getImageUrl());
+
+                    // --- Calculate Dynamic Rating ---
+                    List<Review> reviews = reviewRepository.findByGuideId(user.getId());
+                    if (reviews.isEmpty()) {
+                        userData.put("rating", 0.0);
+                        userData.put("reviewCount", 0);
+                    } else {
+                        double sum = 0;
+                        for (Review r : reviews) {
+                            sum += r.getRating();
+                        }
+                        double avg = sum / reviews.size();
+                        // Format to 1 decimal place. We pass it as String to match frontend
+                        // expectations or parse to Double
+                        userData.put("rating", Double.parseDouble(String.format("%.1f", avg)));
+                        userData.put("reviewCount", reviews.size());
+                    }
                 } else {
                     userData.put("location", "Not provided");
                     userData.put("experience", "Not provided");
                     userData.put("about", "No bio available");
                     userData.put("rating", 0.0);
+                    userData.put("reviewCount", 0);
                     userData.put("image", "https://api.dicebear.com/7.x/avataaars/svg?seed=" + user.getName());
                 }
             } else {
                 Optional<TravelerProfile> profile = travelerProfileRepository.findByUser(user);
                 if (profile.isPresent()) {
                     userData.put("location", profile.get().getLocation());
-                    userData.put("requesting", profile.get().getRequesting());
-                    userData.put("date", profile.get().getDate());
-                    userData.put("budget", profile.get().getBudget());
                     userData.put("image", profile.get().getImageUrl());
                 } else {
                     userData.put("location", "Flexible");
-                    userData.put("requesting", "Any destination");
-                    userData.put("date", "Anytime");
-                    userData.put("budget", "Flexible");
                     userData.put("image", "https://api.dicebear.com/7.x/avataaars/svg?seed=" + user.getName());
                 }
             }

@@ -33,15 +33,12 @@ public class ProfileController {
         String location = (String) payload.get("location");
         String experience = (String) payload.get("experience");
         String about = (String) payload.get("about");
-
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
             return ResponseEntity.badRequest().body("User not found");
         }
-
         GuideProfile profile = guideProfileRepository.findByUser(user.get())
                 .orElse(new GuideProfile());
-
         profile.setUser(user.get());
         profile.setLocation(location);
         profile.setExperience(experience);
@@ -58,7 +55,6 @@ public class ProfileController {
             user.get().setProfileCompleted(true);
             userRepository.save(user.get());
         }
-
         return ResponseEntity.ok(Map.of("message", "Profile updated successfully", "profile", profile));
     }
 
@@ -79,9 +75,6 @@ public class ProfileController {
     public ResponseEntity<?> createOrUpdateTravelerProfile(@RequestBody Map<String, Object> payload) {
         Long userId = Long.valueOf(payload.get("userId").toString());
         String location = (String) payload.get("location");
-        String requesting = (String) payload.get("requesting");
-        String date = (String) payload.get("date");
-        String budget = (String) payload.get("budget");
 
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
@@ -93,21 +86,16 @@ public class ProfileController {
 
         profile.setUser(user.get());
         profile.setLocation(location);
-        profile.setRequesting(requesting);
-        profile.setDate(date);
-        profile.setBudget(budget);
 
         if (profile.getImageUrl() == null) {
             profile.setImageUrl("https://api.dicebear.com/7.x/avataaars/svg?seed=" + user.get().getName());
         }
-
         travelerProfileRepository.save(profile);
 
         if (!user.get().isProfileCompleted()) {
             user.get().setProfileCompleted(true);
             userRepository.save(user.get());
         }
-
         return ResponseEntity.ok(Map.of("message", "Profile updated successfully", "profile", profile));
     }
 

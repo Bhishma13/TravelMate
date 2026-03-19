@@ -2,8 +2,10 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.BookingRequestDTO;
 import com.example.demo.model.BookingRequest;
+import com.example.demo.model.TripPost;
 import com.example.demo.model.User;
 import com.example.demo.repository.BookingRequestRepository;
+import com.example.demo.repository.TripPostRepository;
 import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +27,9 @@ public class BookingController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private TripPostRepository tripPostRepository;
+
     // Create a new booking request
     @PostMapping("/request")
     public ResponseEntity<?> createRequest(@RequestBody Map<String, Object> payload) {
@@ -33,7 +38,24 @@ public class BookingController {
             Long guideId = Long.parseLong(payload.get("guideId").toString());
             String tripDates = payload.get("tripDates").toString();
 
-            BookingRequest request = new BookingRequest(travelerId, guideId, tripDates);
+            // Check if there is an existing active booking with this guide
+            List<BookingRequest> existingRequests = bookingRepository.findByTravelerId(travelerId);
+            boolean hasActive = existingRequests.stream().anyMatch(r -> r.getGuideId().equals(guideId) &&
+                    (r.getStatus().equals("PENDING") || r.getStatus().equals("ACCEPTED")));
+
+            if (hasActive) {
+                return ResponseEntity.badRequest()
+                        .body(Map.of("error", "You already have an active booking request with this guide."));
+            }
+
+            BookingRequest request;
+            if (payload.containsKey("tripPostId") && payload.get("tripPostId") != null) {
+                Long tripPostId = Long.parseLong(payload.get("tripPostId").toString());
+                request = new BookingRequest(travelerId, guideId, tripPostId, tripDates);
+            } else {
+                request = new BookingRequest(travelerId, guideId, tripDates);
+            }
+
             BookingRequest savedRequest = bookingRepository.save(request);
 
             return ResponseEntity.ok(savedRequest);
@@ -60,7 +82,9 @@ public class BookingController {
                         traveler.getPhone(),
                         req.getGuideId(),
                         req.getStatus(),
-                        req.getTripDates());
+                        req.getTripDates(),
+                        req.getTripPostId()); // key field for frontend tab logic
+                dto.setCancellationReason(req.getCancellationReason());
                 dtoList.add(dto);
             }
         }
@@ -88,7 +112,9 @@ public class BookingController {
                         guide.getPhone(),
                         req.getGuideId(),
                         req.getStatus(),
-                        req.getTripDates());
+                        req.getTripDates(),
+                        req.getTripPostId()); // key field for frontend tab logic
+                dto.setCancellationReason(req.getCancellationReason());
                 dtoList.add(dto);
             }
         }
@@ -102,15 +128,55 @@ public class BookingController {
             @RequestBody Map<String, String> payload) {
         try {
             String newStatus = payload.get("status");
-            if (newStatus == null || (!newStatus.equals("ACCEPTED") && !newStatus.equals("DECLINED"))) {
+            if (newStatus == null || (!newStatus.equals("ACCEPTED") && !newStatus.equals("DECLINED")
+                    && !newStatus.equals("COMPLETED") && !newStatus.equals("CANCELLED"))) {
                 return ResponseEntity.badRequest().body("Invalid status");
             }
 
             Optional<BookingRequest> requestOpt = bookingRepository.findById(requestId);
             if (requestOpt.isPresent()) {
                 BookingRequest request = requestOpt.get();
+
+                // Guard: if tripPostId exists and traveler is trying to accept,
+                // make sure no other booking for this post is already ACCEPTED
+                if (newStatus.equals("ACCEPTED") && request.getTripPostId() != null) {
+                    List<BookingRequest> otherAccepted = bookingRepository
+                            .findByTripPostIdAndStatusAndIdNot(request.getTripPostId(), "ACCEPTED", requestId);
+                    if (!otherAccepted.isEmpty()) {
+                        return ResponseEntity.badRequest()
+                                .body(Map.of("error", "You have already chosen a guide for this trip."));
+                    }
+                }
+
+                // If CANCELLED, save the reason provided
+                if (newStatus.equals("CANCELLED")) {
+                    String reason = payload.get("cancellationReason");
+                    request.setCancellationReason(reason != null ? reason : "No reason provided");
+                }
+
                 request.setStatus(newStatus);
                 BookingRequest updatedRequest = bookingRepository.save(request);
+
+                // If a Trip Post proposal was just ACCEPTED:
+                // 1. Mark the TripPost as FULFILLED (off the job board)
+                // 2. Auto-DECLINE all other PENDING proposals for the same TripPost
+                if (newStatus.equals("ACCEPTED") && request.getTripPostId() != null) {
+                    Optional<TripPost> tripPostOpt = tripPostRepository.findById(request.getTripPostId());
+                    if (tripPostOpt.isPresent()) {
+                        TripPost tripPost = tripPostOpt.get();
+                        tripPost.setStatus("FULFILLED");
+                        tripPostRepository.save(tripPost);
+                    }
+
+                    // Auto-decline all other PENDING proposals for this same trip post
+                    List<BookingRequest> otherPending = bookingRepository
+                            .findByTripPostIdAndStatusAndIdNot(request.getTripPostId(), "PENDING", requestId);
+                    for (BookingRequest other : otherPending) {
+                        other.setStatus("DECLINED");
+                        bookingRepository.save(other);
+                    }
+                }
+
                 return ResponseEntity.ok(updatedRequest);
             } else {
                 return ResponseEntity.notFound().build();

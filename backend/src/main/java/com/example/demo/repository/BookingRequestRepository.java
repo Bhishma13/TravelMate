@@ -14,4 +14,8 @@ public interface BookingRequestRepository extends JpaRepository<BookingRequest, 
 
     // For a Traveler to see their outgoing requests
     List<BookingRequest> findByTravelerId(Long travelerId);
+
+    // Find all OTHER pending proposals for the same TripPost (used for
+    // auto-declining)
+    List<BookingRequest> findByTripPostIdAndStatusAndIdNot(Long tripPostId, String status, Long acceptedId);
 }

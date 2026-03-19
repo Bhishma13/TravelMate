@@ -8,12 +8,14 @@ public class BookingRequestDTO {
     private Long guideId;
     private String status;
     private String tripDates;
+    private Long tripPostId;
+    private String cancellationReason;
 
     public BookingRequestDTO() {
     }
 
     public BookingRequestDTO(Long id, Long travelerId, String travelerName, String travelerPhone, Long guideId,
-            String status, String tripDates) {
+            String status, String tripDates, Long tripPostId) {
         this.id = id;
         this.travelerId = travelerId;
         this.travelerName = travelerName;
@@ -21,6 +23,8 @@ public class BookingRequestDTO {
         this.guideId = guideId;
         this.status = status;
         this.tripDates = tripDates;
+        this.tripPostId = tripPostId;
+        this.cancellationReason = null;
     }
 
     // Getters and Setters
@@ -78,5 +82,21 @@ public class BookingRequestDTO {
 
     public void setTripDates(String tripDates) {
         this.tripDates = tripDates;
+    }
+
+    public Long getTripPostId() {
+        return tripPostId;
+    }
+
+    public void setTripPostId(Long tripPostId) {
+        this.tripPostId = tripPostId;
+    }
+
+    public String getCancellationReason() {
+        return cancellationReason;
+    }
+
+    public void setCancellationReason(String cancellationReason) {
+        this.cancellationReason = cancellationReason;
     }
 }

@@ -16,11 +16,17 @@ public class BookingRequest {
     @Column(nullable = false)
     private Long guideId;
 
+    @Column(nullable = true)
+    private Long tripPostId;
+
     @Column(nullable = false)
     private String status; // e.g., "PENDING", "ACCEPTED", "DECLINED"
 
     @Column(nullable = false)
     private String tripDates;
+
+    @Column(nullable = true, length = 500)
+    private String cancellationReason;
 
     // Default constructor
     public BookingRequest() {
@@ -30,6 +36,14 @@ public class BookingRequest {
     public BookingRequest(Long travelerId, Long guideId, String tripDates) {
         this.travelerId = travelerId;
         this.guideId = guideId;
+        this.tripDates = tripDates;
+        this.status = "PENDING";
+    }
+
+    public BookingRequest(Long travelerId, Long guideId, Long tripPostId, String tripDates) {
+        this.travelerId = travelerId;
+        this.guideId = guideId;
+        this.tripPostId = tripPostId;
         this.tripDates = tripDates;
         this.status = "PENDING";
     }
@@ -59,6 +73,14 @@ public class BookingRequest {
         this.guideId = guideId;
     }
 
+    public Long getTripPostId() {
+        return tripPostId;
+    }
+
+    public void setTripPostId(Long tripPostId) {
+        this.tripPostId = tripPostId;
+    }
+
     public String getStatus() {
         return status;
     }
@@ -73,5 +95,13 @@ public class BookingRequest {
 
     public void setTripDates(String tripDates) {
         this.tripDates = tripDates;
+    }
+
+    public String getCancellationReason() {
+        return cancellationReason;
+    }
+
+    public void setCancellationReason(String cancellationReason) {
+        this.cancellationReason = cancellationReason;
     }
 }

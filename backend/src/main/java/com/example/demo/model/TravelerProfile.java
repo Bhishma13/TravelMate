@@ -16,8 +16,5 @@ public class TravelerProfile {
     private User user;
 
     private String location;
-    private String requesting;
-    private String date;
-    private String budget;
     private String imageUrl;
 }

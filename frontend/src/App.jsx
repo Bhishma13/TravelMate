@@ -7,6 +7,8 @@ import ProfileSetup from './pages/ProfileSetup';
 import BookingPage from './pages/BookingPage';
 import RequestsPage from './pages/RequestsPage';
 import MyBookingsPage from './pages/MyBookingsPage';
+import MyTripsPage from './pages/MyTripsPage';
+import WhyTravelMate from './pages/WhyTravelMate';
 import { AuthProvider } from './context/AuthContext';
 import './App.css';
 
@@ -22,7 +24,9 @@ function App() {
             <Route path="/profile" element={<ProfileSetup />} />
             <Route path="/requests" element={<RequestsPage />} />
             <Route path="/my-bookings" element={<MyBookingsPage />} />
+            <Route path="/my-trips" element={<MyTripsPage />} />
             <Route path="/book/:guideId" element={<BookingPage />} />
+            <Route path="/why-travelmate" element={<WhyTravelMate />} />
             <Route path="/" element={<Home />} />
           </Routes>
         </div>
