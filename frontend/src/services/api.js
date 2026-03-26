@@ -1,4 +1,5 @@
-const API_URL = 'http://localhost:8081/api/auth';
+const BASE_BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:8081';
+const API_URL = `${BASE_BACKEND_URL}/api/auth`;
 
 export const registerUser = async (userData) => {
     const response = await fetch(`${API_URL}/register`, {
@@ -26,7 +27,7 @@ export const loginUser = async (credentials) => {
     return response.json();
 };
 
-const BASE_URL = 'http://localhost:8081/api';
+const BASE_URL = `${BASE_BACKEND_URL}/api`;
 
 export const updateProfile = async (profileData) => {
     const response = await fetch(`${BASE_URL}/profile/guide`, {

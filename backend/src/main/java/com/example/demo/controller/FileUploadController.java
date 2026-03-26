@@ -1,46 +1,50 @@
 package com.example.demo.controller;
 
+import com.cloudinary.Cloudinary;
+import com.cloudinary.utils.ObjectUtils;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.Map;
-import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/upload")
-@CrossOrigin(origins = "http://localhost:3000")
+@CrossOrigin(origins = { "http://localhost:3000", "${app.frontend-url}" })
 public class FileUploadController {
 
-    private final Path fileStorageLocation;
+    private final Cloudinary cloudinary;
 
-    public FileUploadController() {
-        this.fileStorageLocation = Paths.get("uploads").toAbsolutePath().normalize();
-        try {
-            Files.createDirectories(this.fileStorageLocation);
-        } catch (Exception ex) {
-            throw new RuntimeException("Could not create the directory where the uploaded files will be stored.", ex);
-        }
+    // Reads from application.properties → set via env vars on Render
+    public FileUploadController(
+            @Value("${cloudinary.cloud-name}") String cloudName,
+            @Value("${cloudinary.api-key}") String apiKey,
+            @Value("${cloudinary.api-secret}") String apiSecret) {
+
+        this.cloudinary = new Cloudinary(ObjectUtils.asMap(
+                "cloud_name", cloudName,
+                "api_key", apiKey,
+                "api_secret", apiSecret,
+                "secure", true));
     }
 
     @PostMapping
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
-            String fileName = UUID.randomUUID().toString() + "_"
-                    + file.getOriginalFilename().replaceAll("[^a-zA-Z0-9.-]", "_");
-            Path targetLocation = this.fileStorageLocation.resolve(fileName);
-            Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
+            // Upload directly to Cloudinary — returns a URL that works forever
+            @SuppressWarnings("unchecked")
+            Map<String, Object> result = cloudinary.uploader().upload(
+                    file.getBytes(),
+                    ObjectUtils.asMap("resource_type", "image"));
 
-            String fileUrl = "http://localhost:8081/uploads/" + fileName;
-            return ResponseEntity.ok(Map.of("imageUrl", fileUrl));
+            String imageUrl = (String) result.get("secure_url"); // always HTTPS
+            return ResponseEntity.ok(Map.of("imageUrl", imageUrl));
+
         } catch (IOException ex) {
             return ResponseEntity.internalServerError()
-                    .body(Map.of("error", "Could not store file. Please try again!"));
+                    .body(Map.of("error", "Could not upload file. Please try again!"));
         }
     }
 }

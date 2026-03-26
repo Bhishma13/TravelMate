@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../context/AuthContext';
 
-const BASE_URL = 'http://localhost:8081/api';
+const BASE_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api`;
 
 /**
  * Polls the backend every 30 seconds for pending notification counts.
