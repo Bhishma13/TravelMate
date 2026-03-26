@@ -5,7 +5,7 @@ let stompClient = null;
 
 export const connectWebSocket = (userId, onMessageReceived, onError) => {
     // 1. Establish the SockJS connection to the Spring Boot endpoint
-    const socket = new SockJS('http://localhost:8080/ws');
+    const socket = new SockJS('http://localhost:8081/ws');
     stompClient = Stomp.over(socket);
 
     // Disable debug logging in console for cleaner output, but can be enabled for troubleshooting

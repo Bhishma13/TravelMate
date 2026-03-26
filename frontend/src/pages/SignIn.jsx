@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
 function SignIn() {
@@ -8,6 +8,8 @@ function SignIn() {
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
     const navigate = useNavigate();
+    const location = useLocation();
+    const [message, setMessage] = useState(location.state?.message || '');
     const { login } = useAuth();
 
     const handleSubmit = async (e) => {
@@ -43,7 +45,8 @@ function SignIn() {
             <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', flex: 1, padding: '2rem', marginTop: '2rem' }}>
                 <div className="auth-container">
                     <h2>Sign In</h2>
-                    {error && <p className="error-message" style={{ color: 'var(--error-color)', background: 'rgba(255,82,82,0.1)', padding: '0.8rem', borderRadius: '8px', border: '1px solid rgba(255,82,82,0.3)' }}>{error}</p>}
+                    {message && <p className="success-message" style={{ color: '#4caf50', background: 'rgba(76, 175, 80, 0.1)', padding: '0.8rem', borderRadius: '8px', border: '1px solid rgba(76, 175, 80, 0.3)', marginBottom: '1.5rem' }}>{message}</p>}
+                    {error && <p className="error-message" style={{ color: 'var(--error-color)', background: 'rgba(255,82,82,0.1)', padding: '0.8rem', borderRadius: '8px', border: '1px solid rgba(255,82,82,0.3)', marginBottom: '1.5rem' }}>{error}</p>}
 
                     <form onSubmit={handleSubmit}>
                         <div className="form-group">

@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { updateProfile, enhanceProfile } from '../services/api';
+import { updateProfile, enhanceProfile, uploadImage } from '../services/api';
 
 import { useAuth } from '../context/AuthContext';
 
@@ -9,7 +9,9 @@ function GuideProfileForm({ userId, onComplete, initialData }) {
         location: initialData?.location || '',
         experience: initialData?.experience || '',
         about: initialData?.about || '',
+        imageUrl: initialData?.imageUrl || '',
     });
+    const [imageFile, setImageFile] = useState(null);
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [isEnhancing, setIsEnhancing] = useState(false);
@@ -35,12 +37,22 @@ function GuideProfileForm({ userId, onComplete, initialData }) {
         setFormData({ ...formData, [e.target.name]: e.target.value });
     };
 
+    const handleFileChange = (e) => {
+        if (e.target.files && e.target.files[0]) {
+            setImageFile(e.target.files[0]);
+        }
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError('');
         try {
-            await updateProfile({ userId, ...formData });
+            let finalImageUrl = formData.imageUrl;
+            if (imageFile) {
+                finalImageUrl = await uploadImage(imageFile);
+            }
+            await updateProfile({ userId, ...formData, imageUrl: finalImageUrl });
             if (updateUser) {
                 updateUser({ profileCompleted: true });
             }
@@ -104,6 +116,21 @@ function GuideProfileForm({ userId, onComplete, initialData }) {
                         rows="4"
                         className="form-textarea"
                         required
+                    />
+                </div>
+
+                <div className="form-group">
+                    <label>Profile Picture (Optional):</label>
+                    {formData.imageUrl && !imageFile && (
+                        <img src={formData.imageUrl} alt="Profile" style={{ width: '80px', height: '80px', borderRadius: '50%', marginBottom: '1rem', objectFit: 'cover' }} />
+                    )}
+                    {imageFile && (
+                        <p style={{ fontSize: '0.85rem', color: '#4caf50', marginBottom: '0.5rem' }}>Selected: {imageFile.name}</p>
+                    )}
+                    <input
+                        type="file"
+                        accept="image/*"
+                        onChange={handleFileChange}
                     />
                 </div>
 

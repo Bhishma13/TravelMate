@@ -46,7 +46,7 @@ function SignUp() {
 
         try {
             await register({ role, ...formData });
-            navigate('/dashboard');
+            navigate('/signin', { state: { message: 'Registration successful! Please sign in.' } });
         } catch (err) {
             setError(err.message);
         }

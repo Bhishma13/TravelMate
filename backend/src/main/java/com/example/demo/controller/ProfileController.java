@@ -15,7 +15,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/profile")
-@CrossOrigin(origins = "http://localhost:5173")
+@CrossOrigin(origins = "http://localhost:3000")
 public class ProfileController {
 
     @Autowired
@@ -46,8 +46,14 @@ public class ProfileController {
         // Set default rating/image for now
         if (profile.getRating() == null)
             profile.setRating(0.0);
-        if (profile.getImageUrl() == null)
-            profile.setImageUrl("https://api.dicebear.com/7.x/avataaars/svg?seed=" + user.get().getName());
+
+        String imageUrl = payload.containsKey("imageUrl") ? (String) payload.get("imageUrl") : null;
+        if (imageUrl != null && !imageUrl.trim().isEmpty()) {
+            profile.setImageUrl(imageUrl.trim());
+        } else if (profile.getImageUrl() == null || profile.getImageUrl().startsWith("https://api.dicebear.com")) {
+            profile.setImageUrl(
+                    "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png");
+        }
 
         guideProfileRepository.save(profile);
 
@@ -87,8 +93,12 @@ public class ProfileController {
         profile.setUser(user.get());
         profile.setLocation(location);
 
-        if (profile.getImageUrl() == null) {
-            profile.setImageUrl("https://api.dicebear.com/7.x/avataaars/svg?seed=" + user.get().getName());
+        String imageUrl = payload.containsKey("imageUrl") ? (String) payload.get("imageUrl") : null;
+        if (imageUrl != null && !imageUrl.trim().isEmpty()) {
+            profile.setImageUrl(imageUrl.trim());
+        } else if (profile.getImageUrl() == null || profile.getImageUrl().startsWith("https://api.dicebear.com")) {
+            profile.setImageUrl(
+                    "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png");
         }
         travelerProfileRepository.save(profile);
 

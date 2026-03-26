@@ -20,7 +20,7 @@ export const AuthProvider = ({ children }) => {
     const register = async (userData) => {
         try {
             const data = await registerUser(userData);
-            setUser(data.user);
+            // We no longer automatically login the user on register, requiring them to sign in.
             return data;
         } catch (error) {
             console.error("Registration error:", error);

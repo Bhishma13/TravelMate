@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:8080/api/auth';
+const API_URL = 'http://localhost:8081/api/auth';
 
 export const registerUser = async (userData) => {
     const response = await fetch(`${API_URL}/register`, {
@@ -26,7 +26,7 @@ export const loginUser = async (credentials) => {
     return response.json();
 };
 
-const BASE_URL = 'http://localhost:8080/api';
+const BASE_URL = 'http://localhost:8081/api';
 
 export const updateProfile = async (profileData) => {
     const response = await fetch(`${BASE_URL}/profile/guide`, {
@@ -245,4 +245,18 @@ export const enhanceTrip = async (text) => {
         throw new Error(data.error || 'Failed to enhance trip description with AI');
     }
     return data.enhancedText;
+};
+
+export const uploadImage = async (file) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    const response = await fetch(`${BASE_URL}/upload`, {
+        method: 'POST',
+        body: formData
+    });
+    const data = await response.json();
+    if (!response.ok) {
+        throw new Error(data.error || 'Failed to upload image');
+    }
+    return data.imageUrl;
 };
