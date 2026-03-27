@@ -1,6 +1,17 @@
 const BASE_BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:8081';
 const API_URL = `${BASE_BACKEND_URL}/api/auth`;
 
+const getAuthHeaders = (isFormData = false) => {
+    const token = localStorage.getItem('token');
+    const headers = {};
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+    }
+    if (!isFormData) {
+        headers['Content-Type'] = 'application/json';
+    }
+    return headers;
+};
 export const registerUser = async (userData) => {
     const response = await fetch(`${API_URL}/register`, {
         method: 'POST',
@@ -32,7 +43,7 @@ const BASE_URL = `${BASE_BACKEND_URL}/api`;
 export const updateProfile = async (profileData) => {
     const response = await fetch(`${BASE_URL}/profile/guide`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify(profileData),
     });
     if (!response.ok) {
@@ -48,7 +59,7 @@ export const getUsersByRole = async (role, page = 0, size = 10, location = '') =
     if (location && location.trim() !== '') {
         url += `&location=${encodeURIComponent(location)}`;
     }
-    const response = await fetch(url);
+    const response = await fetch(url, { headers: getAuthHeaders() });
     if (!response.ok) {
         const errorText = await response.text();
         throw new Error(errorText || 'Failed to fetch users');
@@ -57,7 +68,7 @@ export const getUsersByRole = async (role, page = 0, size = 10, location = '') =
 };
 
 export const getGuideProfile = async (userId) => {
-    const response = await fetch(`${BASE_URL}/profile/guide/${userId}`);
+    const response = await fetch(`${BASE_URL}/profile/guide/${userId}`, { headers: getAuthHeaders() });
     if (!response.ok) {
         if (response.status === 404) return null; // Handle profile not found gracefully
         const errorText = await response.text();
@@ -69,7 +80,7 @@ export const getGuideProfile = async (userId) => {
 export const updateTravelerProfile = async (profileData) => {
     const response = await fetch(`${BASE_URL}/profile/traveler`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify(profileData),
     });
     if (!response.ok) {
@@ -80,7 +91,7 @@ export const updateTravelerProfile = async (profileData) => {
 };
 
 export const getTravelerProfile = async (userId) => {
-    const response = await fetch(`${BASE_URL}/profile/traveler/${userId}`);
+    const response = await fetch(`${BASE_URL}/profile/traveler/${userId}`, { headers: getAuthHeaders() });
     if (!response.ok) {
         if (response.status === 404) return null; // Handle profile not found gracefully
         const errorText = await response.text();
@@ -92,7 +103,7 @@ export const getTravelerProfile = async (userId) => {
 export const createBookingRequest = async (bookingData) => {
     const response = await fetch(`${BASE_URL}/bookings/request`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify(bookingData),
     });
     if (!response.ok) {
@@ -103,7 +114,7 @@ export const createBookingRequest = async (bookingData) => {
 };
 
 export const getGuideRequests = async (guideId) => {
-    const response = await fetch(`${BASE_URL}/bookings/guide/${guideId}`);
+    const response = await fetch(`${BASE_URL}/bookings/guide/${guideId}`, { headers: getAuthHeaders() });
     if (!response.ok) {
         const errorText = await response.text();
         throw new Error(errorText || 'Failed to fetch guide requests');
@@ -112,7 +123,7 @@ export const getGuideRequests = async (guideId) => {
 };
 
 export const getTravelerRequests = async (travelerId) => {
-    const response = await fetch(`${BASE_URL}/bookings/traveler/${travelerId}`);
+    const response = await fetch(`${BASE_URL}/bookings/traveler/${travelerId}`, { headers: getAuthHeaders() });
     if (!response.ok) {
         const errorText = await response.text();
         throw new Error(errorText || 'Failed to fetch traveler bookgings');
@@ -125,7 +136,7 @@ export const updateBookingStatus = async (requestId, status, cancellationReason 
     if (cancellationReason) payload.cancellationReason = cancellationReason;
     const response = await fetch(`${BASE_URL}/bookings/request/${requestId}/status`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify(payload)
     });
     if (!response.ok) {
@@ -138,7 +149,7 @@ export const updateBookingStatus = async (requestId, status, cancellationReason 
 export const createReview = async (reviewData) => {
     const response = await fetch(`${BASE_URL}/reviews`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify(reviewData)
     });
     if (!response.ok) {
@@ -155,7 +166,7 @@ export const createReview = async (reviewData) => {
 };
 
 export const getGuideReviews = async (guideId) => {
-    const response = await fetch(`${BASE_URL}/reviews/guide/${guideId}`);
+    const response = await fetch(`${BASE_URL}/reviews/guide/${guideId}`, { headers: getAuthHeaders() });
     if (!response.ok) {
         let errorText = 'Failed to fetch reviews';
         try {
@@ -170,7 +181,7 @@ export const getGuideReviews = async (guideId) => {
 };
 
 export const getChatHistory = async (bookingRequestId, userId) => {
-    const response = await fetch(`${BASE_URL}/messages/${bookingRequestId}?userId=${userId}`);
+    const response = await fetch(`${BASE_URL}/messages/${bookingRequestId}?userId=${userId}`, { headers: getAuthHeaders() });
     if (!response.ok) {
         const errorText = await response.text();
         throw new Error(errorText || 'Failed to fetch chat history');
@@ -181,7 +192,7 @@ export const getChatHistory = async (bookingRequestId, userId) => {
 export const createTripPost = async (postData) => {
     const response = await fetch(`${BASE_URL}/posts`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify(postData)
     });
     if (!response.ok) {
@@ -192,7 +203,7 @@ export const createTripPost = async (postData) => {
 };
 
 export const getTravelerPosts = async (travelerId) => {
-    const response = await fetch(`${BASE_URL}/posts/traveler/${travelerId}`);
+    const response = await fetch(`${BASE_URL}/posts/traveler/${travelerId}`, { headers: getAuthHeaders() });
     if (!response.ok) {
         const errorText = await response.text();
         throw new Error(errorText || 'Failed to fetch traveler posts');
@@ -201,7 +212,7 @@ export const getTravelerPosts = async (travelerId) => {
 };
 
 export const getOpenBoardPosts = async () => {
-    const response = await fetch(`${BASE_URL}/posts/board`);
+    const response = await fetch(`${BASE_URL}/posts/board`, { headers: getAuthHeaders() });
     if (!response.ok) {
         const errorText = await response.text();
         throw new Error(errorText || 'Failed to fetch open board posts');
@@ -212,7 +223,7 @@ export const getOpenBoardPosts = async () => {
 export const updateTripPostStatus = async (postId, status) => {
     const response = await fetch(`${BASE_URL}/posts/${postId}/status`, {
         method: 'PUT',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ status })
     });
     if (!response.ok) {
@@ -225,7 +236,7 @@ export const updateTripPostStatus = async (postId, status) => {
 export const enhanceProfile = async (text) => {
     const response = await fetch(`${BASE_URL}/ai/enhance-profile`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ text })
     });
     const data = await response.json();
@@ -238,7 +249,7 @@ export const enhanceProfile = async (text) => {
 export const enhanceTrip = async (text) => {
     const response = await fetch(`${BASE_URL}/ai/enhance-trip`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: getAuthHeaders(),
         body: JSON.stringify({ text })
     });
     const data = await response.json();
@@ -253,6 +264,7 @@ export const uploadImage = async (file) => {
     formData.append('file', file);
     const response = await fetch(`${BASE_URL}/upload`, {
         method: 'POST',
+        headers: getAuthHeaders(true),
         body: formData
     });
     const data = await response.json();

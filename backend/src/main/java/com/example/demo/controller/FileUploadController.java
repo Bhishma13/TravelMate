@@ -12,7 +12,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/api/upload")
-@CrossOrigin(origins = { "http://localhost:3000", "${app.frontend-url}" })
+@CrossOrigin(origins = "http://localhost:3000")
 public class FileUploadController {
 
     private final Cloudinary cloudinary;

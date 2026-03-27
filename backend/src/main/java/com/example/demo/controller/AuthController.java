@@ -5,6 +5,7 @@ import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import com.example.demo.security.JwtUtil;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Map;
@@ -17,6 +18,9 @@ public class AuthController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private JwtUtil jwtUtil;
 
     // BCrypt encoder — strength 10 means 2^10 hashing rounds (industry default)
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
@@ -50,7 +54,9 @@ public class AuthController {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         userRepository.save(user);
-        return ResponseEntity.ok(Map.of("message", "User registered successfully", "user", user));
+
+        String token = jwtUtil.generateToken(user.getEmail(), user.getRole() != null ? user.getRole() : "traveler");
+        return ResponseEntity.ok(Map.of("message", "User registered successfully", "user", user, "token", token));
     }
 
     @PostMapping("/login")
@@ -69,7 +75,9 @@ public class AuthController {
         // BCrypt's matches() hashes the incoming password and compares it
         // to the stored hash — the original plain text is never recoverable
         if (user.isPresent() && passwordEncoder.matches(password, user.get().getPassword())) {
-            return ResponseEntity.ok(Map.of("message", "Login successful", "user", user.get()));
+            String token = jwtUtil.generateToken(user.get().getEmail(),
+                    user.get().getRole() != null ? user.get().getRole() : "traveler");
+            return ResponseEntity.ok(Map.of("message", "Login successful", "user", user.get(), "token", token));
         }
 
         return ResponseEntity.status(401).body("Invalid credentials");

@@ -1,15 +1,34 @@
-import React, { createContext, useState, useContext } from 'react';
+import React, { createContext, useState, useContext, useEffect } from 'react';
 import { loginUser, registerUser } from '../services/api';
 
 const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(null);
+    const [user, setUser] = useState(() => {
+        const savedUser = localStorage.getItem('user');
+        return savedUser ? JSON.parse(savedUser) : null;
+    });
+
+    const [token, setToken] = useState(() => {
+        return localStorage.getItem('token') || null;
+    });
+
+    // Sync state changes back to localStorage
+    useEffect(() => {
+        if (token) localStorage.setItem('token', token);
+        else localStorage.removeItem('token');
+    }, [token]);
+
+    useEffect(() => {
+        if (user) localStorage.setItem('user', JSON.stringify(user));
+        else localStorage.removeItem('user');
+    }, [user]);
 
     const login = async (credentials) => {
         try {
             const data = await loginUser(credentials);
-            setUser(data.user);
+            if (data.token) setToken(data.token);
+            if (data.user) setUser(data.user);
             return data;
         } catch (error) {
             console.error("Login error:", error);
@@ -20,7 +39,8 @@ export const AuthProvider = ({ children }) => {
     const register = async (userData) => {
         try {
             const data = await registerUser(userData);
-            // We no longer automatically login the user on register, requiring them to sign in.
+            // We usually let them login manually after registering,
+            // but if desired, we can capture the token here too.
             return data;
         } catch (error) {
             console.error("Registration error:", error);
@@ -30,6 +50,7 @@ export const AuthProvider = ({ children }) => {
 
     const logout = () => {
         setUser(null);
+        setToken(null);
     };
 
     const updateUser = (userData) => {
@@ -37,7 +58,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, login, register, logout, updateUser }}>
+        <AuthContext.Provider value={{ user, token, login, register, logout, updateUser }}>
             {children}
         </AuthContext.Provider>
     );
