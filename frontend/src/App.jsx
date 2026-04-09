@@ -9,6 +9,8 @@ import RequestsPage from './pages/RequestsPage';
 import MyBookingsPage from './pages/MyBookingsPage';
 import MyTripsPage from './pages/MyTripsPage';
 import WhyTravelMate from './pages/WhyTravelMate';
+import ForgotPassword from './pages/ForgotPassword';
+import ResetPassword from './pages/ResetPassword';
 import { AuthProvider } from './context/AuthContext';
 import './App.css';
 
@@ -27,6 +29,8 @@ function App() {
             <Route path="/my-trips" element={<MyTripsPage />} />
             <Route path="/book/:guideId" element={<BookingPage />} />
             <Route path="/why-travelmate" element={<WhyTravelMate />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/" element={<Home />} />
           </Routes>
         </div>

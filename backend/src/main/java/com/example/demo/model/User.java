@@ -7,6 +7,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 @Entity
 @Table(name = "users")
 @Data
@@ -25,4 +27,8 @@ public class User {
     private String adhaar;
 
     private boolean profileCompleted = false;
+
+    // Forgot-password flow
+    private String resetToken;
+    private LocalDateTime resetTokenExpiry;
 }

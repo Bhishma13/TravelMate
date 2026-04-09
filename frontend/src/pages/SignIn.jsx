@@ -65,6 +65,11 @@ function SignIn() {
                         <div className="form-group">
                             <label>Password</label>
                             <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} required placeholder="••••••••" />
+                            <div style={{ textAlign: 'right', marginTop: '0.5rem' }}>
+                                <Link to="/forgot-password" style={{ fontSize: '0.88rem', color: 'var(--primary-color)', textDecoration: 'none' }}>
+                                    Forgot Password?
+                                </Link>
+                            </div>
                         </div>
 
                         <button type="submit" style={{ marginTop: '1.5rem' }}>Sign In</button>
