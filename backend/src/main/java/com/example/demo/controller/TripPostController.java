@@ -2,8 +2,10 @@ package com.example.demo.controller;
 
 import com.example.demo.model.TripPost;
 import com.example.demo.model.User;
+import com.example.demo.model.TravelerProfile;
 import com.example.demo.repository.TripPostRepository;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.repository.TravelerProfileRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -22,6 +24,9 @@ public class TripPostController {
 
     @Autowired
     private UserRepository userRepository;
+
+    @Autowired
+    private TravelerProfileRepository travelerProfileRepository;
 
     // Create a new Trip Post
     @PostMapping
@@ -55,6 +60,14 @@ public class TripPostController {
         List<Map<String, Object>> response = openPosts.stream().map(post -> {
             Optional<User> userOpt = userRepository.findById(post.getTravelerId());
             boolean hasUser = userOpt.isPresent();
+            String travelerImageUrl = "";
+            if (hasUser) {
+                Optional<TravelerProfile> profileOpt = travelerProfileRepository.findByUser(userOpt.get());
+                if (profileOpt.isPresent() && profileOpt.get().getImageUrl() != null) {
+                    travelerImageUrl = profileOpt.get().getImageUrl();
+                }
+            }
+
             Map<String, Object> map = new java.util.HashMap<>();
             map.put("id", post.getId());
             map.put("travelerId", post.getTravelerId());
@@ -64,7 +77,7 @@ public class TripPostController {
             map.put("status", post.getStatus());
             map.put("createdAt", post.getCreatedAt());
             map.put("travelerName", hasUser ? userOpt.get().getName() : "Traveler");
-            map.put("travelerImage", "");
+            map.put("travelerImage", travelerImageUrl);
             return map;
         }).toList();
         return ResponseEntity.ok(response);
