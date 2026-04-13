@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
 import com.example.demo.model.TripPost;
+import com.example.demo.model.User;
 import com.example.demo.repository.TripPostRepository;
+import com.example.demo.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -17,6 +19,9 @@ public class TripPostController {
 
     @Autowired
     private TripPostRepository tripPostRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     // Create a new Trip Post
     @PostMapping
@@ -45,9 +50,23 @@ public class TripPostController {
 
     // Get all OPEN posts for the Guide Job Board
     @GetMapping("/board")
-    public ResponseEntity<List<TripPost>> getOpenBoardPosts() {
+    public ResponseEntity<List<Map<String, Object>>> getOpenBoardPosts() {
         List<TripPost> openPosts = tripPostRepository.findByStatusOrderByCreatedAtDesc("OPEN");
-        return ResponseEntity.ok(openPosts);
+        List<Map<String, Object>> response = openPosts.stream().map(post -> {
+            Optional<User> userOpt = userRepository.findById(post.getTravelerId());
+            boolean hasUser = userOpt.isPresent();
+            return Map.of(
+                    "id", post.getId(),
+                    "travelerId", post.getTravelerId(),
+                    "destination", post.getDestination(),
+                    "tripDates", post.getTripDates(),
+                    "description", post.getDescription(),
+                    "status", post.getStatus(),
+                    "createdAt", post.getCreatedAt(),
+                    "travelerName", hasUser ? userOpt.get().getName() : "Traveler",
+                    "travelerImage", hasUser && userOpt.get().getImageUrl() != null ? userOpt.get().getImageUrl() : "");
+        }).toList();
+        return ResponseEntity.ok(response);
     }
 
     // Update the status of a post

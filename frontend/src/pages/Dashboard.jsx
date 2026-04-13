@@ -57,7 +57,8 @@ function Dashboard() {
             } else {
                 getUsersByRole('guide', currentPage, 10, activeSearch)
                     .then(data => {
-                        setDataToShow(data.content);
+                        const validGuides = data.content.filter(g => g.location && g.location !== 'Not provided');
+                        setDataToShow(validGuides);
                         setTotalPages(data.totalPages);
                     })
                     .catch(err => console.error(`Failed to load guides`, err))
@@ -293,13 +294,16 @@ function Dashboard() {
                     </div>
                 ) : (
                     dataToShow.map((item) => (
-                        <div key={item.id} className="card" style={{ maxWidth: '380px', margin: '0 auto', width: '100%' }}>
+                        <div key={item.id} className="card" style={{ maxWidth: '340px', margin: '0 auto', width: '100%' }}>
                             {isGuide ? (
-                                <div style={{ fontSize: '2.5rem', textAlign: 'center', margin: '1rem 0' }}>🌍</div>
+                                <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', marginTop: '0.5rem' }}>
+                                    <img src={getFullImageUrl(item.travelerImage) || `https://api.dicebear.com/7.x/avataaars/svg?seed=${item.travelerName || 'Traveler'}`} alt={item.travelerName || 'Traveler'} className="avatar" />
+                                    <div style={{ fontSize: '1.5rem', textAlign: 'center', marginTop: '-15px', background: 'var(--surface-color)', borderRadius: '50%', padding: '0 5px', zIndex: 2 }}>🌍</div>
+                                </div>
                             ) : (
-                                <img src={getFullImageUrl(item.image) || `https://api.dicebear.com/7.x/avataaars/svg?seed=${item.name}`} alt={item.name} className="avatar" style={{ objectFit: 'cover' }} />
+                                <img src={getFullImageUrl(item.image) || `https://api.dicebear.com/7.x/avataaars/svg?seed=${item.name}`} alt={item.name} className="avatar" />
                             )}
-                            <div className="card-content" style={{ padding: '1.5rem' }}>
+                            <div className="card-content">
                                 {isGuide ? (
                                     <>
                                         <h3>📍 {item.destination}</h3>
