@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 
@@ -10,7 +10,13 @@ function SignIn() {
     const navigate = useNavigate();
     const location = useLocation();
     const [message, setMessage] = useState(location.state?.message || '');
-    const { login } = useAuth();
+    const { login, user } = useAuth();
+
+    useEffect(() => {
+        if (user) {
+            navigate('/dashboard');
+        }
+    }, [user, navigate]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -24,7 +30,6 @@ function SignIn() {
 
         try {
             await login({ email, password }); // Backend will return role
-            navigate('/dashboard');
         } catch (err) {
             setError(err.message);
         }

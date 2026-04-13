@@ -1,6 +1,12 @@
 const BASE_BACKEND_URL = import.meta.env.VITE_API_URL || 'http://localhost:8081';
 const API_URL = `${BASE_BACKEND_URL}/api/auth`;
 
+export const getFullImageUrl = (url) => {
+    if (!url) return null;
+    if (url.startsWith('http') || url.startsWith('data:')) return url;
+    return `${BASE_BACKEND_URL}${url.startsWith('/') ? '' : '/'}${url}`;
+};
+
 const getAuthHeaders = (isFormData = false) => {
     const token = localStorage.getItem('token');
     const headers = {};

@@ -2,7 +2,7 @@ import React from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Navigate, useNavigate } from 'react-router-dom';
 import { useNotifications } from '../hooks/useNotifications';
-import { getGuideProfile, getTravelerProfile, getUsersByRole, getGuideReviews, getOpenBoardPosts, createBookingRequest } from '../services/api';
+import { getGuideProfile, getTravelerProfile, getUsersByRole, getGuideReviews, getOpenBoardPosts, createBookingRequest, getFullImageUrl } from '../services/api';
 
 function Dashboard() {
     const { user, logout } = useAuth();
@@ -219,9 +219,9 @@ function Dashboard() {
                     <div style={{ display: 'grid', gridTemplateColumns: '1fr 2fr', gap: '2rem', alignItems: 'start' }}>
                         <div style={{ textAlign: 'center' }}>
                             <img
-                                src={(isGuide ? guideProfile.imageUrl : travelerProfile.imageUrl) || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`}
+                                src={getFullImageUrl(isGuide ? guideProfile.imageUrl : travelerProfile.imageUrl) || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user.name}`}
                                 alt="Profile"
-                                style={{ width: '150px', height: '150px', borderRadius: '50%', border: '4px solid var(--primary-color)', boxShadow: '0 0 20px rgba(0, 229, 255, 0.2)' }}
+                                style={{ width: '150px', height: '150px', borderRadius: '50%', border: '4px solid var(--primary-color)', boxShadow: '0 0 20px rgba(0, 229, 255, 0.2)', objectFit: 'cover' }}
                             />
                         </div>
                         <div>
@@ -293,13 +293,13 @@ function Dashboard() {
                     </div>
                 ) : (
                     dataToShow.map((item) => (
-                        <div key={item.id} className="card">
+                        <div key={item.id} className="card" style={{ maxWidth: '380px', margin: '0 auto', width: '100%' }}>
                             {isGuide ? (
-                                <div style={{ fontSize: '3rem', textAlign: 'center', margin: '1rem 0' }}>🌍</div>
+                                <div style={{ fontSize: '2.5rem', textAlign: 'center', margin: '1rem 0' }}>🌍</div>
                             ) : (
-                                <img src={item.image} alt={item.name} className="avatar" />
+                                <img src={getFullImageUrl(item.image) || `https://api.dicebear.com/7.x/avataaars/svg?seed=${item.name}`} alt={item.name} className="avatar" style={{ objectFit: 'cover' }} />
                             )}
-                            <div className="card-content">
+                            <div className="card-content" style={{ padding: '1.5rem' }}>
                                 {isGuide ? (
                                     <>
                                         <h3>📍 {item.destination}</h3>

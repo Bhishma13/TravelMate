@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { updateProfile, enhanceProfile, uploadImage } from '../services/api';
+import React, { useState, useRef } from 'react';
+import { updateProfile, enhanceProfile, uploadImage, getFullImageUrl } from '../services/api';
 
 import { useAuth } from '../context/AuthContext';
 
@@ -15,6 +15,7 @@ function GuideProfileForm({ userId, onComplete, initialData }) {
     const [error, setError] = useState('');
     const [loading, setLoading] = useState(false);
     const [isEnhancing, setIsEnhancing] = useState(false);
+    const fileInputRef = useRef(null);
 
     const handleEnhance = async () => {
         if (!formData.about || formData.about.trim().length < 5) {
@@ -122,14 +123,21 @@ function GuideProfileForm({ userId, onComplete, initialData }) {
                 <div className="form-group">
                     <label>Profile Picture (Optional):</label>
                     {formData.imageUrl && !imageFile && (
-                        <img src={formData.imageUrl} alt="Profile" style={{ width: '80px', height: '80px', borderRadius: '50%', marginBottom: '1rem', objectFit: 'cover' }} />
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '1rem' }}>
+                            <img src={getFullImageUrl(formData.imageUrl)} alt="Profile" style={{ width: '80px', height: '80px', borderRadius: '50%', objectFit: 'cover' }} />
+                            <button type="button" onClick={() => setFormData({ ...formData, imageUrl: '' })} style={{ fontSize: '0.8rem', padding: '0.4rem 0.8rem', border: '1px solid #FF5252', background: 'transparent', color: '#FF5252', cursor: 'pointer', borderRadius: '6px', width: 'auto' }}>Remove Picture</button>
+                        </div>
                     )}
                     {imageFile && (
-                        <p style={{ fontSize: '0.85rem', color: '#4caf50', marginBottom: '0.5rem' }}>Selected: {imageFile.name}</p>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', marginBottom: '0.5rem' }}>
+                            <p style={{ fontSize: '0.85rem', color: '#4caf50', margin: 0 }}>Selected: {imageFile.name}</p>
+                            <button type="button" onClick={() => { setImageFile(null); if (fileInputRef.current) fileInputRef.current.value = ''; }} style={{ fontSize: '0.8rem', padding: '0.3rem 0.6rem', border: '1px solid #FF5252', background: 'transparent', color: '#FF5252', cursor: 'pointer', borderRadius: '6px', width: 'auto' }}>Remove File</button>
+                        </div>
                     )}
                     <input
                         type="file"
                         accept="image/*"
+                        ref={fileInputRef}
                         onChange={handleFileChange}
                     />
                 </div>
