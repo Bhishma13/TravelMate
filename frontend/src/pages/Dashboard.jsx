@@ -311,16 +311,9 @@ function Dashboard() {
                                     <button
                                         className="cta-button outline"
                                         style={{ alignSelf: 'flex-start', padding: '0.5rem 1.5rem', borderRadius: '50px', marginTop: 'auto' }}
-                                        onClick={() => {
-                                            if (!user.profileCompleted) {
-                                                alert("Please complete your profile before sending proposals!");
-                                                navigate('/profile');
-                                            } else {
-                                                handleSendProposal(item);
-                                            }
-                                        }}
+                                        onClick={() => navigate(`/post/${item.id}`, { state: { post: item } })}
                                     >
-                                        Send Proposal
+                                        View Details
                                     </button>
                                 </div>
                             </div>

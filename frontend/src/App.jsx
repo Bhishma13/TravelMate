@@ -8,6 +8,7 @@ import BookingPage from './pages/BookingPage';
 import RequestsPage from './pages/RequestsPage';
 import MyBookingsPage from './pages/MyBookingsPage';
 import MyTripsPage from './pages/MyTripsPage';
+import TripPostDetail from './pages/TripPostDetail';
 import WhyTravelMate from './pages/WhyTravelMate';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
@@ -27,6 +28,7 @@ function App() {
             <Route path="/requests" element={<RequestsPage />} />
             <Route path="/my-bookings" element={<MyBookingsPage />} />
             <Route path="/my-trips" element={<MyTripsPage />} />
+            <Route path="/post/:id" element={<TripPostDetail />} />
             <Route path="/book/:guideId" element={<BookingPage />} />
             <Route path="/why-travelmate" element={<WhyTravelMate />} />
             <Route path="/forgot-password" element={<ForgotPassword />} />
