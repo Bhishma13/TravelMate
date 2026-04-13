@@ -17,7 +17,10 @@ public class GuideProfile {
 
     private String location;
     private String experience;
+
+    @Column(length = 2000)
     private String about;
+
     private Double rating;
     private String imageUrl;
 }
