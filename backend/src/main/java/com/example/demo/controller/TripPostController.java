@@ -55,16 +55,17 @@ public class TripPostController {
         List<Map<String, Object>> response = openPosts.stream().map(post -> {
             Optional<User> userOpt = userRepository.findById(post.getTravelerId());
             boolean hasUser = userOpt.isPresent();
-            return Map.of(
-                    "id", post.getId(),
-                    "travelerId", post.getTravelerId(),
-                    "destination", post.getDestination(),
-                    "tripDates", post.getTripDates(),
-                    "description", post.getDescription(),
-                    "status", post.getStatus(),
-                    "createdAt", post.getCreatedAt(),
-                    "travelerName", hasUser ? userOpt.get().getName() : "Traveler",
-                    "travelerImage", hasUser && userOpt.get().getImageUrl() != null ? userOpt.get().getImageUrl() : "");
+            Map<String, Object> map = new java.util.HashMap<>();
+            map.put("id", post.getId());
+            map.put("travelerId", post.getTravelerId());
+            map.put("destination", post.getDestination());
+            map.put("tripDates", post.getTripDates());
+            map.put("description", post.getDescription());
+            map.put("status", post.getStatus());
+            map.put("createdAt", post.getCreatedAt());
+            map.put("travelerName", hasUser ? userOpt.get().getName() : "Traveler");
+            map.put("travelerImage", "");
+            return map;
         }).toList();
         return ResponseEntity.ok(response);
     }
