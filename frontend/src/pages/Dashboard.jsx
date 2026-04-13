@@ -321,29 +321,30 @@ function Dashboard() {
                     ))
                 ) : (
                     dataToShow.map((item) => (
-                        <div key={item.id} className="card" style={{ maxWidth: '340px', margin: '0 auto', width: '100%' }}>
-                            <img src={getFullImageUrl(item.image) || `https://api.dicebear.com/7.x/avataaars/svg?seed=${item.name}`} alt={item.name} className="avatar" />
-                            <div className="card-content">
-                                <h3 style={{ fontSize: '1.4rem', color: 'var(--primary-color)' }}>{item.name}</h3>
-                                <p><strong>Location:</strong> {item.location}</p>
-                                <p><strong>Experience:</strong> {item.experience}</p>
-                                <p><strong>Rating:</strong> ⭐ {item.rating}</p>
-                                <p className="about" style={{ color: '#ccc', fontStyle: 'italic', marginBottom: '1.5rem' }}>"{item.about}"</p>
+                        <div key={item.id} className="card" style={{ width: '100%', flexDirection: 'column' }}>
+                            <div style={{ position: 'relative', width: '100%', height: '160px', backgroundColor: '#e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden' }}>
+                                <div style={{ position: 'absolute', width: '100%', height: '100%', backgroundColor: 'var(--primary-light)', opacity: 0.5 }}></div>
+                                <span style={{ fontSize: '5rem', zIndex: 1, textShadow: '0 4px 10px rgba(0,0,0,0.1)' }}>📍</span>
+                                <h3 style={{ margin: 0, fontSize: '1.5rem', color: 'var(--text-main)', zIndex: 2, padding: '0 1rem', textAlign: 'center', fontWeight: '800' }}>{item.location}</h3>
+                            </div>
+                            <div className="card-content" style={{ display: 'flex', gap: '1.5rem', padding: '1.5rem', flexDirection: 'row' }}>
+                                <div style={{ flexShrink: 0 }}>
+                                    <img src={getFullImageUrl(item.image) || `https://api.dicebear.com/7.x/avataaars/svg?seed=${item.name}`} alt={item.name} style={{ width: '60px', height: '60px', borderRadius: '50%', objectFit: 'cover', border: '3px solid var(--primary-color)' }} />
+                                </div>
+                                <div style={{ flexGrow: 1, display: 'flex', flexDirection: 'column' }}>
+                                    <h4 style={{ margin: '0 0 0.2rem 0', fontSize: '1.2rem', color: 'var(--primary-hover)' }}>{item.name}</h4>
+                                    <p style={{ margin: '0 0 0.4rem 0', fontWeight: 'bold', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>⭐ {item.rating} Rating</p>
+                                    <p style={{ margin: '0 0 0.8rem 0', fontSize: '0.9rem', color: 'var(--text-secondary)' }}>Experience: {item.experience}</p>
+                                    <p style={{ margin: '0 0 1rem 0', fontSize: '0.95rem', color: 'var(--text-main)', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden', fontStyle: 'italic', lineHeight: '1.5' }}>"{item.about}"</p>
 
-                                <button
-                                    className="cta-button outline"
-                                    style={{ marginTop: 'auto', borderRadius: '12px' }}
-                                    onClick={() => {
-                                        if (!user.profileCompleted) {
-                                            alert("Please complete your profile before sending requests!");
-                                            navigate('/profile');
-                                        } else {
-                                            navigate(`/book/${item.id}`, { state: { guideName: item.name } });
-                                        }
-                                    }}
-                                >
-                                    Contact Guide
-                                </button>
+                                    <button
+                                        className="cta-button outline"
+                                        style={{ alignSelf: 'flex-start', padding: '0.5rem 1.5rem', borderRadius: '50px', marginTop: 'auto' }}
+                                        onClick={() => navigate(`/guide/${item.id}`, { state: { guide: item } })}
+                                    >
+                                        View Details
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     ))
