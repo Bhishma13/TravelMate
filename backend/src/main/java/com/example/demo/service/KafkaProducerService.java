@@ -14,7 +14,7 @@ public class KafkaProducerService {
     private static final String TOPIC = "user-registration-events";
 
     @Autowired
-    private KafkaTemplate<Object, Object> kafkaTemplate;
+    private KafkaTemplate<String, Object> kafkaTemplate;
 
     public void sendRegistrationEvent(UserRegistrationEvent event) {
         LOGGER.info(String.format("Producing User Registration Event for email: %s", event.getEmail()));
