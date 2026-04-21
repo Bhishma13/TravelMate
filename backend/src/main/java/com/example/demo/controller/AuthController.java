@@ -3,6 +3,8 @@ package com.example.demo.controller;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
 import com.example.demo.service.EmailService;
+import com.example.demo.service.KafkaProducerService;
+import com.example.demo.event.UserRegistrationEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -27,6 +29,9 @@ public class AuthController {
 
     @Autowired
     private EmailService emailService;
+
+    @Autowired
+    private KafkaProducerService kafkaProducerService;
 
     private final BCryptPasswordEncoder passwordEncoder = new BCryptPasswordEncoder(10);
 
@@ -54,6 +59,9 @@ public class AuthController {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
 
         userRepository.save(user);
+
+        // Dispatch event to Kafka for Async Email Notification
+        kafkaProducerService.sendRegistrationEvent(new UserRegistrationEvent(user.getEmail(), user.getName()));
 
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole() != null ? user.getRole() : "traveler");
         return ResponseEntity.ok(Map.of("message", "User registered successfully", "user", user, "token", token));
