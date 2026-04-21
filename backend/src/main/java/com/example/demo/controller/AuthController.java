@@ -60,8 +60,13 @@ public class AuthController {
 
         userRepository.save(user);
 
-        // Dispatch event to Kafka for Async Email Notification
-        kafkaProducerService.sendRegistrationEvent(new UserRegistrationEvent(user.getEmail(), user.getName()));
+        // Dispatch event to Kafka for Async Email Notification (fire-and-forget)
+        try {
+            kafkaProducerService.sendRegistrationEvent(new UserRegistrationEvent(user.getEmail(), user.getName()));
+        } catch (Exception e) {
+            // Log the failure but do NOT crash the registration
+            System.err.println("Kafka email event failed (non-critical): " + e.getMessage());
+        }
 
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole() != null ? user.getRole() : "traveler");
         return ResponseEntity.ok(Map.of("message", "User registered successfully", "user", user, "token", token));
