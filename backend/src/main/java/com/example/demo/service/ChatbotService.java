@@ -31,7 +31,7 @@ public class ChatbotService {
             float[] queryEmbedding = embeddingService.getEmbedding(question);
             String queryVector = embeddingService.toVectorString(queryEmbedding);
 
-            List<KnowledgeChunk> relevantChunks = knowledgeChunkRepository.findMostSimilar(queryVector, 3);
+            List<KnowledgeChunk> relevantChunks = knowledgeChunkRepository.findMostSimilar(queryVector);
 
             if (relevantChunks.isEmpty()) {
                 return "I'm sorry, I don't have enough information to answer that question. Please contact TravelMate support at support@travelmate.com for further assistance.";

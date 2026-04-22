@@ -59,10 +59,7 @@ public class KnowledgeBaseLoader {
                     float[] embedding = embeddingService.getEmbedding(trimmedChunk);
                     String vectorString = embeddingService.toVectorString(embedding);
 
-                    KnowledgeChunk knowledgeChunk = new KnowledgeChunk();
-                    knowledgeChunk.setContent(trimmedChunk);
-                    knowledgeChunk.setEmbedding(vectorString);
-                    knowledgeChunkRepository.save(knowledgeChunk);
+                    knowledgeChunkRepository.insertChunk(trimmedChunk, vectorString);
 
                     savedCount++;
                     LOGGER.info("Indexed chunk {}: {}...", savedCount,
