@@ -22,7 +22,7 @@ public class EmbeddingService {
     @Value("${gemini.api.key}")
     private String apiKey;
 
-    private static final String EMBEDDING_URL = "https://generativelanguage.googleapis.com/v1beta/models/embedding-001:embedContent";
+    private static final String EMBEDDING_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-embedding-001:embedContent";
 
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -31,9 +31,11 @@ public class EmbeddingService {
         try {
 
             Map<String, Object> requestBody = Map.of(
+                    "model", "models/gemini-embedding-001",
                     "content", Map.of(
                             "parts", List.of(
-                                    Map.of("text", text))));
+                                    Map.of("text", text))),
+                    "outputDimensionality", 768);
 
             String requestJson = objectMapper.writeValueAsString(requestBody);
 
