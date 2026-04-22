@@ -14,6 +14,7 @@ import WhyTravelMate from './pages/WhyTravelMate';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
 import { AuthProvider } from './context/AuthContext';
+import ChatWidget from './components/ChatWidget';
 import './App.css';
 
 function App() {
@@ -37,6 +38,7 @@ function App() {
             <Route path="/reset-password" element={<ResetPassword />} />
             <Route path="/" element={<Home />} />
           </Routes>
+          <ChatWidget />
         </div>
       </Router>
     </AuthProvider>
