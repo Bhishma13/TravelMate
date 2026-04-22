@@ -22,7 +22,7 @@ public class EmbeddingService {
     @Value("${gemini.api.key}")
     private String apiKey;
 
-    private static final String EMBEDDING_URL = "https://generativelanguage.googleapis.com/v1beta/models/text-embedding-004:embedContent";
+    private static final String EMBEDDING_URL = "https://generativelanguage.googleapis.com/v1beta/models/embedding-001:embedContent";
 
     private final HttpClient httpClient = HttpClient.newHttpClient();
     private final ObjectMapper objectMapper = new ObjectMapper();
@@ -46,8 +46,8 @@ public class EmbeddingService {
             HttpResponse<String> response = httpClient.send(request, HttpResponse.BodyHandlers.ofString());
 
             if (response.statusCode() != 200) {
-                LOGGER.error("Gemini Embedding API error: {}", response.body());
-                throw new RuntimeException("Failed to get embedding from Gemini API");
+                LOGGER.error("Gemini Embedding API error [status={}]: {}", response.statusCode(), response.body());
+                throw new RuntimeException("Failed to get embedding from Gemini API. Status: " + response.statusCode());
             }
 
             JsonNode rootNode = objectMapper.readTree(response.body());
