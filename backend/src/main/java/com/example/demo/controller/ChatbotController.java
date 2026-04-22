@@ -41,12 +41,21 @@ public class ChatbotController {
     public ResponseEntity<String> debugDatabaseSave() {
         try {
             long existing = knowledgeChunkRepository.count();
-            float[] embedding = embeddingService.getEmbedding("This is a simple test policy.");
-            String vectorString = embeddingService.toVectorString(embedding);
-            knowledgeChunkRepository.insertChunk("This is a simple test policy.", vectorString);
-            return ResponseEntity.ok("Success! 1 row saved. Total before test: " + existing);
+            float[] queryEmbedding = embeddingService.getEmbedding("What is TravelMate?");
+            String queryVector = embeddingService.toVectorString(queryEmbedding);
+
+            java.util.List<com.example.demo.model.KnowledgeChunk> chunks = knowledgeChunkRepository
+                    .findMostSimilar(queryVector);
+
+            StringBuilder result = new StringBuilder(
+                    "Total in DB: " + existing + "\\n\\nTOP 3 RESULTS FOR 'What is TravelMate?':\\n");
+            for (com.example.demo.model.KnowledgeChunk c : chunks) {
+                result.append("--- CHUNK ID ").append(c.getId()).append(" ---\\n");
+                result.append("CONTENT: ").append(c.getContent()).append("\\n\\n");
+            }
+            return ResponseEntity.ok(result.toString());
         } catch (Exception e) {
-            String errorMsg = "Failed to embed or save: " + e.getClass().getName() + " - " + e.getMessage();
+            String errorMsg = "Error: " + e.getClass().getName() + " - " + e.getMessage();
             if (e.getCause() != null) {
                 errorMsg += " | Cause: " + e.getCause().getMessage();
             }
