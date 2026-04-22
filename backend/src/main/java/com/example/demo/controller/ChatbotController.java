@@ -30,4 +30,27 @@ public class ChatbotController {
         String answer = chatbotService.askQuestion(request.getQuestion().trim());
         return ResponseEntity.ok(new ChatResponse(answer));
     }
+
+    @Autowired
+    private com.example.demo.repository.KnowledgeChunkRepository knowledgeChunkRepository;
+
+    @Autowired
+    private com.example.demo.service.EmbeddingService embeddingService;
+
+    @GetMapping("/debug")
+    public ResponseEntity<String> debugDatabaseSave() {
+        try {
+            long existing = knowledgeChunkRepository.count();
+            float[] embedding = embeddingService.getEmbedding("This is a simple test policy.");
+            String vectorString = embeddingService.toVectorString(embedding);
+            knowledgeChunkRepository.insertChunk("This is a simple test policy.", vectorString);
+            return ResponseEntity.ok("Success! 1 row saved. Total before test: " + existing);
+        } catch (Exception e) {
+            String errorMsg = "Failed to embed or save: " + e.getClass().getName() + " - " + e.getMessage();
+            if (e.getCause() != null) {
+                errorMsg += " | Cause: " + e.getCause().getMessage();
+            }
+            return ResponseEntity.status(500).body(errorMsg);
+        }
+    }
 }
