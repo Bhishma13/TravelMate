@@ -60,11 +60,9 @@ public class AuthController {
 
         userRepository.save(user);
 
-        // Dispatch event to Kafka for Async Email Notification (fire-and-forget)
         try {
             kafkaProducerService.sendRegistrationEvent(new UserRegistrationEvent(user.getEmail(), user.getName()));
         } catch (Exception e) {
-            // Log the failure but do NOT crash the registration
             System.err.println("Kafka email event failed (non-critical): " + e.getMessage());
         }
 
@@ -92,7 +90,6 @@ public class AuthController {
         return ResponseEntity.status(401).body("Invalid credentials");
     }
 
-    // ── Forgot Password ──────────────────────────────────────────────────────
     @PostMapping("/forgot-password")
     public ResponseEntity<?> forgotPassword(@RequestBody Map<String, String> body) {
         String email = body.get("email");
@@ -102,8 +99,7 @@ public class AuthController {
 
         Optional<User> optUser = userRepository.findByEmail(email);
 
-        // Always respond the same way — prevents attackers from learning which emails
-        // are registered
+       
         String genericMessage = "If this email is registered, a reset link has been sent.";
 
         if (optUser.isPresent()) {
@@ -123,7 +119,7 @@ public class AuthController {
         return ResponseEntity.ok(Map.of("message", genericMessage));
     }
 
-    // ── Reset Password ───────────────────────────────────────────────────────
+    
     @PostMapping("/reset-password")
     public ResponseEntity<?> resetPassword(@RequestBody Map<String, String> body) {
         String token = body.get("token");

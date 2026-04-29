@@ -3,15 +3,33 @@ import './ChatWidget.css';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8081';
 
+/**
+ * Derive a stable sessionId for conversation memory.
+ * - Logged-in users: use their numeric userId (stored in localStorage by the auth flow).
+ * - Anonymous users: generate a UUID once per browser session stored in sessionStorage.
+ */
+function getSessionId() {
+  const userId = localStorage.getItem('userId');
+  if (userId) return `user-${userId}`;
+
+  let anonId = sessionStorage.getItem('tm_anon_session');
+  if (!anonId) {
+    anonId = `anon-${crypto.randomUUID()}`;
+    sessionStorage.setItem('tm_anon_session', anonId);
+  }
+  return anonId;
+}
+
 function ChatWidget() {
   const [isOpen, setIsOpen] = useState(false);
   const [messages, setMessages] = useState([
-    { role: 'bot', text: 'Hi! 👋 I\'m TravelMate AI. Ask me anything about our platform — policies, bookings, cancellations, guides, or how things work!' }
+    { role: 'bot', text: 'Hi! 👋 I\'m TravelMate AI. Ask me about policies, finding guides, open trips to join, or how the platform works!' }
   ]);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const messagesEndRef = useRef(null);
   const inputRef = useRef(null);
+
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -32,10 +50,11 @@ function ChatWidget() {
     setIsLoading(true);
 
     try {
+      const sessionId = getSessionId();
       const response = await fetch(`${API_BASE}/api/chatbot/ask`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ question })
+        body: JSON.stringify({ question, sessionId })
       });
 
       const data = await response.json();
@@ -55,10 +74,55 @@ function ChatWidget() {
   };
 
   const quickQuestions = [
-    'What is TravelMate?',
-    'Cancellation policy?',
-    'How to book a guide?'
+    'What is the cancellation policy?',
+    'Find guides in Goa',
+    'Open trips to Manali'
   ];
+
+  /**
+   * Render a bot message, converting any /post/{id} or /guide/{id}
+   * paths into real clickable buttons.
+   * - Logged-in users: go directly to the page
+   * - Not logged in: go to /signin?redirect=/post/5 so after login they return
+   */
+  function renderBotMessage(text) {
+    const isLoggedIn = !!localStorage.getItem('userId');
+    // Split on /post/{id} or /guide/{id} patterns
+    const parts = text.split(/(\/(post|guide)\/\d+)/g);
+    const elements = [];
+    let i = 0;
+
+    while (i < parts.length) {
+      const part = parts[i];
+
+      if (/^\/post\/\d+$/.test(part)) {
+        const href = isLoggedIn ? part : `/signin?redirect=${encodeURIComponent(part)}`;
+        elements.push(
+          <a key={i} href={href} className="chat-trip-link">
+            View Trip &amp; Connect →
+          </a>
+        );
+        i++;
+      } else if (/^\/guide\/\d+$/.test(part)) {
+        const href = isLoggedIn ? part : `/signin?redirect=${encodeURIComponent(part)}`;
+        elements.push(
+          <a key={i} href={href} className="chat-trip-link">
+            View Guide Profile →
+          </a>
+        );
+        i++;
+      } else if (part === 'post' || part === 'guide') {
+        // Captured group from regex split — skip
+        i++;
+      } else if (part) {
+        elements.push(<span key={i}>{part}</span>);
+        i++;
+      } else {
+        i++;
+      }
+    }
+    return elements;
+  }
 
   return (
     <div className="chat-widget">
@@ -70,7 +134,7 @@ function ChatWidget() {
               <div className="chat-header-dot"></div>
               <div>
                 <div className="chat-header-title">TravelMate AI</div>
-                <div className="chat-header-subtitle">Powered by Gemini + RAG</div>
+                <div className="chat-header-subtitle">Powered by Gemini · Agentic AI</div>
               </div>
             </div>
             <button className="chat-close-btn" onClick={() => setIsOpen(false)}>✕</button>
@@ -81,7 +145,7 @@ function ChatWidget() {
               <div key={i} className={`chat-message ${msg.role}`}>
                 {msg.role === 'bot' && <span className="msg-icon">🤖</span>}
                 <div className={`message-bubble ${msg.role}`}>
-                  {msg.text}
+                  {msg.role === 'bot' ? renderBotMessage(msg.text) : msg.text}
                 </div>
               </div>
             ))}

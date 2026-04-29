@@ -1,27 +1,66 @@
-import React, { useState } from 'react';
-import { useLocation, useNavigate, Navigate } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useLocation, useNavigate, useParams, Navigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { getFullImageUrl, createBookingRequest } from '../services/api';
 
+const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8081';
+
 function TripPostDetail() {
     const { state } = useLocation();
+    const { id } = useParams();          // ← from /post/:id (AI deep link)
     const navigate = useNavigate();
     const { user } = useAuth();
-    const [loading, setLoading] = useState(false);
 
+    const [post, setPost] = useState(state?.post || null);
+    const [loading, setLoading] = useState(false);
+    const [fetchError, setFetchError] = useState(null);
+
+    // If user is not logged in, redirect to /signin and come back after login
     if (!user) {
-        return <Navigate to="/signin" />;
+        const returnPath = id ? `/post/${id}` : '/dashboard';
+        return <Navigate to={`/signin?redirect=${encodeURIComponent(returnPath)}`} />;
     }
 
-    const post = state?.post;
+    // If we arrived via direct URL (/post/5) without router state, fetch the post by ID
+    useEffect(() => {
+        if (!post && id) {
+            fetch(`${API_BASE}/api/posts/${id}`, {
+                headers: { Authorization: `Bearer ${localStorage.getItem('token')}` }
+            })
+                .then(r => {
+                    if (!r.ok) throw new Error('Trip not found');
+                    return r.json();
+                })
+                .then(data => setPost(data))
+                .catch(err => setFetchError(err.message));
+        }
+    }, [id]);
+
+    if (fetchError) {
+        return (
+            <div className="dashboard-container" style={{ maxWidth: '900px', margin: '0 auto', padding: '2.5rem' }}>
+                <p style={{ color: 'var(--text-secondary)' }}>
+                    Could not load trip. It may have been removed or is no longer open.
+                </p>
+                <button onClick={() => navigate('/dashboard')}
+                    style={{ background: 'transparent', color: 'var(--primary-color)', border: 'none', cursor: 'pointer', padding: 0 }}>
+                    ← Back to Dashboard
+                </button>
+            </div>
+        );
+    }
 
     if (!post) {
-        return <Navigate to="/dashboard" />;
+        return (
+            <div className="dashboard-container" style={{ maxWidth: '900px', margin: '0 auto', padding: '2.5rem' }}>
+                <p style={{ color: 'var(--text-secondary)' }}>Loading trip details...</p>
+            </div>
+        );
     }
 
     const handleSendProposal = async () => {
         if (!user.profileCompleted) {
-            alert("Please complete your profile before sending proposals!");
+            alert('Please complete your profile before sending proposals!');
             navigate('/profile');
             return;
         }
@@ -35,10 +74,10 @@ function TripPostDetail() {
                     tripDates: post.tripDates,
                     tripPostId: post.id
                 });
-                alert("Proposal sent successfully! You can view it in your Booking Requests.");
-                navigate('/dashboard'); // Go back to dashboard after success
+                alert('Proposal sent successfully! You can view it in your Booking Requests.');
+                navigate('/dashboard');
             } catch (err) {
-                alert(err.message || "Failed to send proposal.");
+                alert(err.message || 'Failed to send proposal.');
             } finally {
                 setLoading(false);
             }

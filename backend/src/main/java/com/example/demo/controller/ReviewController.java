@@ -28,7 +28,6 @@ public class ReviewController {
     @Autowired
     private UserRepository userRepository;
 
-    // 1. Submit a new review
     @PostMapping
     public ResponseEntity<?> createReview(@RequestBody Map<String, Object> payload) {
         try {
@@ -38,16 +37,13 @@ public class ReviewController {
             Integer rating = Integer.parseInt(payload.get("rating").toString());
             String comment = payload.get("comment") != null ? payload.get("comment").toString() : "";
 
-            // Validate logic: has it already been reviewed?
             if (reviewRepository.existsByBookingRequestId(bookingId)) {
                 return ResponseEntity.badRequest().body(Map.of("error", "This trip has already been reviewed."));
             }
 
-            // Create and save the review
             Review review = new Review(bookingId, travelerId, guideId, rating, comment);
             Review savedReview = reviewRepository.save(review);
 
-            // MAGIC TRICK: Automatically update the BookingRequest status to "REVIEWED"
             Optional<BookingRequest> bookingOpt = bookingRepository.findById(bookingId);
             if (bookingOpt.isPresent()) {
                 BookingRequest booking = bookingOpt.get();
@@ -61,15 +57,9 @@ public class ReviewController {
         }
     }
 
-    // 2. Fetch all reviews for a specific guide (so we can display them on their
-    // profile)
     @GetMapping("/guide/{guideId}")
     public ResponseEntity<?> getGuideReviews(@PathVariable Long guideId) {
         List<Review> reviews = reviewRepository.findByGuideId(guideId);
-
-        // Let's also attach the Traveler's Name to each review so the UI can show who
-        // wrote it
-        // Rather than a DTO, we can just return a list of Maps for simplicity here.
         List<Map<String, Object>> responseList = reviews.stream().map(review -> {
             Map<String, Object> map = new HashMap<>();
             map.put("id", review.getId());
@@ -77,7 +67,6 @@ public class ReviewController {
             map.put("comment", review.getComment());
             map.put("createdAt", review.getCreatedAt());
 
-            // Look up the traveler's name
             userRepository.findById(review.getTravelerId()).ifPresent(traveler -> {
                 map.put("travelerName", traveler.getName());
             });

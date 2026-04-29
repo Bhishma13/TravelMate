@@ -199,6 +199,28 @@
   border-bottom-right-radius: 6px;
 }
 
+/* --- Deep Link Buttons (inside bot messages) --- */
+.chat-trip-link {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 6px 14px;
+  background: linear-gradient(135deg, #0d9488, #0f766e);
+  color: #fff !important;
+  text-decoration: none;
+  border-radius: 20px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  letter-spacing: 0.2px;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(13, 148, 136, 0.3);
+}
+
+.chat-trip-link:hover {
+  background: linear-gradient(135deg, #0f766e, #115e59);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(13, 148, 136, 0.4);
+}
+
 /* --- Typing Dots --- */
 .typing-dots {
   display: flex;

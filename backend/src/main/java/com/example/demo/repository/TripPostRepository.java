@@ -14,4 +14,8 @@ public interface TripPostRepository extends JpaRepository<TripPost, Long> {
 
     // For the Job Board (Guides looking for work)
     List<TripPost> findByStatusOrderByCreatedAtDesc(String status);
+
+    // For AI tool — search OPEN trips by destination keyword (case-insensitive)
+    List<TripPost> findByDestinationContainingIgnoreCaseAndStatusOrderByCreatedAtDesc(
+            String destination, String status);
 }

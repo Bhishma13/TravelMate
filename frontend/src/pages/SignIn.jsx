@@ -14,9 +14,12 @@ function SignIn() {
 
     useEffect(() => {
         if (user) {
-            navigate('/dashboard');
+            // If came from AI chatbot link, return to that page after login
+            const params = new URLSearchParams(location.search);
+            const redirect = params.get('redirect');
+            navigate(redirect || '/dashboard');
         }
-    }, [user, navigate]);
+    }, [user, navigate, location.search]);
 
     const handleSubmit = async (e) => {
         e.preventDefault();

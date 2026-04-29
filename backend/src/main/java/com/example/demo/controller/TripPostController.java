@@ -28,7 +28,6 @@ public class TripPostController {
     @Autowired
     private TravelerProfileRepository travelerProfileRepository;
 
-    // Create a new Trip Post
     @PostMapping
     public ResponseEntity<?> createPost(@RequestBody Map<String, Object> payload) {
         try {
@@ -44,6 +43,36 @@ public class TripPostController {
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of("error", "Failed to create trip post: " + e.getMessage()));
         }
+    }
+
+    // Get a single post by ID (used when navigating from AI deep link)
+    @GetMapping("/{id}")
+    public ResponseEntity<?> getPostById(@PathVariable Long id) {
+        Optional<TripPost> postOpt = tripPostRepository.findById(id);
+        if (postOpt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+        TripPost post = postOpt.get();
+        Optional<User> userOpt = userRepository.findById(post.getTravelerId());
+        boolean hasUser = userOpt.isPresent();
+        String travelerImageUrl = "";
+        if (hasUser) {
+            Optional<TravelerProfile> profileOpt = travelerProfileRepository.findByUser(userOpt.get());
+            if (profileOpt.isPresent() && profileOpt.get().getImageUrl() != null) {
+                travelerImageUrl = profileOpt.get().getImageUrl();
+            }
+        }
+        Map<String, Object> map = new java.util.HashMap<>();
+        map.put("id", post.getId());
+        map.put("travelerId", post.getTravelerId());
+        map.put("destination", post.getDestination());
+        map.put("tripDates", post.getTripDates());
+        map.put("description", post.getDescription());
+        map.put("status", post.getStatus());
+        map.put("createdAt", post.getCreatedAt());
+        map.put("travelerName", hasUser ? userOpt.get().getName() : "Traveler");
+        map.put("travelerImage", travelerImageUrl);
+        return ResponseEntity.ok(map);
     }
 
     // Get all history specifically for one traveler
