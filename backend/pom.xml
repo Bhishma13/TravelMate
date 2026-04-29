@@ -60,6 +60,11 @@
 			<artifactId>spring-ai-autoconfigure-model-google-genai</artifactId>
 			<version>${spring-ai.version}</version>
 		</dependency>
+		<!-- OpenAI starter (used for Groq via custom base-url) -->
+		<dependency>
+			<groupId>org.springframework.ai</groupId>
+			<artifactId>spring-ai-openai-spring-boot-starter</artifactId>
+		</dependency>
 		<!-- Core auto-configuration for ChatClient.Builder -->
 		<dependency>
 			<groupId>org.springframework.ai</groupId>
