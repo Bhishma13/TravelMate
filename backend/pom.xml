@@ -63,7 +63,7 @@
 		<!-- OpenAI starter (used for Groq via custom base-url) -->
 		<dependency>
 			<groupId>org.springframework.ai</groupId>
-			<artifactId>spring-ai-openai-spring-boot-starter</artifactId>
+			<artifactId>spring-ai-starter-model-openai</artifactId>
 			<version>${spring-ai.version}</version>
 		</dependency>
 		<!-- Core auto-configuration for ChatClient.Builder -->
