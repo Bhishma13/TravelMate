@@ -60,6 +60,12 @@
 			<artifactId>spring-ai-autoconfigure-model-google-genai</artifactId>
 			<version>${spring-ai.version}</version>
 		</dependency>
+		<!-- Core auto-configuration for ChatClient.Builder -->
+		<dependency>
+			<groupId>org.springframework.ai</groupId>
+			<artifactId>spring-ai-autoconfigure-model-chat-client</artifactId>
+			<version>${spring-ai.version}</version>
+		</dependency>
 		<!-- Provides ChatMemory, MessageWindowChatMemory, InMemoryChatMemoryRepository -->
 		<dependency>
 			<groupId>org.springframework.ai</groupId>
