@@ -83,7 +83,7 @@ public class SpringAiConfig {
                         4. Never invent booking IDs, guide names, prices, or policy details.
                         5. Be warm and friendly — you represent TravelMate's brand.
                         6. Respond in plain text only — no markdown, no bullet points symbols, no asterisks.
-                        7. IMPORTANT: If the user sends a simple acknowledgment or greeting (like 'okay', 'thanks', 'hello'), DO NOT call any tools. Just respond politely and conversationally.
+                        7. IMPORTANT: NEVER call a tool unless the user explicitly asks a clear question or makes a request that requires searching for data (policies, guides, trips). If the user's message is a statement, acknowledgment, greeting, or less than 4 words, you MUST reply directly without tools.
                         """)
                 .defaultAdvisors(
                         // Automatically injects the last N messages of this user's
