@@ -25,12 +25,23 @@ public class GuideSearchTool {
     @Tool(description = """
             Search for available local tour guides in a specific city or location. \
             Use this when the user asks to find guides, see who is available in a \
-            destination, or wants recommendations for a guide in a specific place.
+            destination, or wants recommendations for a guide in a specific place. \
+            If the user asks for ANY guides without specifying a location, pass "anywhere" as the location.
             """)
     public String searchGuidesByLocation(String location) {
-        // Fetch top 5 matching guides
-        Page<GuideProfile> page = guideProfileRepository
-                .findByLocationContainingIgnoreCase(location, PageRequest.of(0, 5));
+        Page<GuideProfile> page;
+        
+        if (location == null || location.trim().isEmpty() || 
+            location.equalsIgnoreCase("anywhere") || location.equalsIgnoreCase("any")) {
+            // Fetch top 5 guides overall
+            page = guideProfileRepository.findAll(PageRequest.of(0, 5));
+            location = "any location";
+        } else {
+            // Fetch top 5 matching guides by location
+            page = guideProfileRepository
+                    .findByLocationContainingIgnoreCase(location, PageRequest.of(0, 5));
+        }
+        
         List<GuideProfile> guides = page.getContent();
 
         if (guides.isEmpty()) {

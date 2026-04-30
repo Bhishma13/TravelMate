@@ -31,13 +31,24 @@ public class OpenTripSearchTool {
             Search for open traveler trip posts by destination or location. \
             Use this when the user asks about open trips, travel plans, \
             trip companions, or wants to know if anyone is going to a specific place. \
+            If the user asks for ANY open trips without specifying a destination, pass "anywhere" as the destination. \
             Returns a list of open trips with direct links so users can view and connect.
             """)
     public String searchOpenTrips(String destination) {
-        // Query only OPEN trips matching the destination keyword
-        List<TripPost> trips = tripPostRepository
-                .findByDestinationContainingIgnoreCaseAndStatusOrderByCreatedAtDesc(
-                        destination, "OPEN");
+        List<TripPost> trips;
+        
+        // Handle cases where the AI guesses "anywhere" or leaves it empty
+        if (destination == null || destination.trim().isEmpty() || 
+            destination.equalsIgnoreCase("anywhere") || destination.equalsIgnoreCase("any")) {
+            // Query all OPEN trips regardless of destination
+            trips = tripPostRepository.findByStatusOrderByCreatedAtDesc("OPEN");
+            destination = "any location";
+        } else {
+            // Query only OPEN trips matching the destination keyword
+            trips = tripPostRepository
+                    .findByDestinationContainingIgnoreCaseAndStatusOrderByCreatedAtDesc(
+                            destination, "OPEN");
+        }
 
         if (trips.isEmpty()) {
             return "No open trips found for '" + destination + "' right now. "
