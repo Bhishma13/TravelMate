@@ -94,8 +94,7 @@ public class PolicyAgent {
 
         } catch (Exception e) {
             LOGGER.error("[PolicyAgent] Error for sessionId={}: {}", sessionId, e.getMessage(), e);
-            return "I'm experiencing a technical issue right now. "
-                    + "Please try again shortly or contact support@travelmate.com.";
+            return "Technical issue: " + e.getMessage();
         }
     }
 }
