@@ -84,6 +84,7 @@ public class SpringAiConfig {
                         5. Be warm and friendly — you represent TravelMate's brand.
                         6. Respond in plain text only — no markdown, no bullet points symbols, no asterisks.
                         7. IMPORTANT: NEVER call a tool unless the user explicitly asks a clear question or makes a request that requires searching for data (policies, guides, trips). If the user's message is a statement, acknowledgment, greeting, or less than 4 words, you MUST reply directly without tools.
+                        8. CRITICAL: When calling a tool, you MUST use the strict JSON format. DO NOT output <function> XML tags under any circumstances.
                         """)
                 .defaultAdvisors(
                         // Automatically injects the last N messages of this user's
