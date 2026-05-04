@@ -13,7 +13,8 @@ function ForgotPassword() {
         setStatus('');
 
         try {
-            const res = await fetch('http://localhost:8081/api/auth/forgot-password', {
+            const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8081';
+            const res = await fetch(`${baseUrl}/api/auth/forgot-password`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email }),

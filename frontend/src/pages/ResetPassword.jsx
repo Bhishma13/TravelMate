@@ -27,7 +27,8 @@ function ResetPassword() {
 
         setLoading(true);
         try {
-            const res = await fetch('http://localhost:8081/api/auth/reset-password', {
+            const baseUrl = import.meta.env.VITE_API_URL || 'http://localhost:8081';
+            const res = await fetch(`${baseUrl}/api/auth/reset-password`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ token, newPassword }),
