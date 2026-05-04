@@ -26,18 +26,22 @@ public class KnowledgeBaseLoader {
     private EmbeddingService embeddingService;
 
     @PostConstruct
-    public void loadKnowledgeBase() {
+    public void init() {
+        // Run asynchronously to prevent blocking the main thread during startup
+        // This avoids Render's "Port scan timeout" error
+        java.util.concurrent.CompletableFuture.runAsync(this::loadKnowledgeBase);
+    }
 
+    private void loadKnowledgeBase() {
         long existingCount = knowledgeChunkRepository.count();
         if (existingCount > 0) {
             LOGGER.info("Knowledge base already loaded with {} chunks. Skipping.", existingCount);
             return;
         }
 
-        LOGGER.info("Loading knowledge base into PgVector...");
+        LOGGER.info("Loading knowledge base into PgVector in background...");
 
         try {
-
             ClassPathResource resource = new ClassPathResource("knowledge/travelmate-policies.txt");
             String fullText;
             try (BufferedReader reader = new BufferedReader(
@@ -55,7 +59,6 @@ public class KnowledgeBaseLoader {
                 }
 
                 try {
-
                     float[] embedding = embeddingService.getEmbedding(trimmedChunk);
                     String vectorString = embeddingService.toVectorString(embedding);
 
@@ -65,7 +68,8 @@ public class KnowledgeBaseLoader {
                     LOGGER.info("Indexed chunk {}: {}...", savedCount,
                             trimmedChunk.substring(0, Math.min(60, trimmedChunk.length())));
 
-                    Thread.sleep(500);
+                    // Reduced sleep to prevent rate limiting but keep it fast
+                    Thread.sleep(100);
 
                 } catch (Exception e) {
                     LOGGER.error("Failed to index chunk: {}...",
@@ -73,7 +77,7 @@ public class KnowledgeBaseLoader {
                 }
             }
 
-            LOGGER.info("Knowledge base loading complete. {} chunks indexed.", savedCount);
+            LOGGER.info("Background knowledge base loading complete. {} chunks indexed.", savedCount);
 
         } catch (Exception e) {
             LOGGER.error("Failed to load knowledge base file: {}", e.getMessage(), e);
