@@ -2,33 +2,23 @@ package com.example.demo.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
-
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 
 @Service
 public class EmailService {
 
     @Autowired
-    private JavaMailSender mailSender;
+    private SendGridService sendGridService;
 
     @Value("${app.frontend-url:http://localhost:3000}")
     private String frontendUrl;
 
-    public void sendPasswordResetEmail(String toEmail, String resetToken) throws MessagingException {
+    public void sendPasswordResetEmail(String toEmail, String resetToken) {
         String resetLink = frontendUrl + "/reset-password?token=" + resetToken;
+        String subject = "TravelMate – Reset Your Password";
+        String htmlContent = buildEmailBody(resetLink);
 
-        MimeMessage message = mailSender.createMimeMessage();
-        MimeMessageHelper helper = new MimeMessageHelper(message, true);
-
-        helper.setTo(toEmail);
-        helper.setSubject("TravelMate – Reset Your Password");
-        helper.setText(buildEmailBody(resetLink), true);
-
-        mailSender.send(message);
+        sendGridService.sendEmail(toEmail, subject, htmlContent, true);
     }
 
     private String buildEmailBody(String resetLink) {
