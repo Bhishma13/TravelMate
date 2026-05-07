@@ -6,6 +6,8 @@ import com.example.demo.model.User;
 import com.example.demo.repository.GuideProfileRepository;
 import com.example.demo.repository.TravelerProfileRepository;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.security.OwnershipValidator;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,23 +29,36 @@ public class ProfileController {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private OwnershipValidator ownershipValidator;
+
+    // Create or update a guide's profile
+    // Security: You can only update YOUR OWN profile
     @PostMapping("/guide")
-    public ResponseEntity<?> createOrUpdateGuideProfile(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<?> createOrUpdateGuideProfile(@RequestBody Map<String, Object> payload,
+            HttpServletRequest httpRequest) {
+
         Long userId = Long.valueOf(payload.get("userId").toString());
+
+        // SECURITY: The logged-in user must match the userId in the request body
+        ownershipValidator.requireOwnership(httpRequest, userId);
+
         String location = (String) payload.get("location");
         String experience = (String) payload.get("experience");
         String about = (String) payload.get("about");
+
         Optional<User> user = userRepository.findById(userId);
         if (user.isEmpty()) {
             return ResponseEntity.badRequest().body("User not found");
         }
+
         GuideProfile profile = guideProfileRepository.findByUser(user.get())
                 .orElse(new GuideProfile());
         profile.setUser(user.get());
         profile.setLocation(location);
         profile.setExperience(experience);
         profile.setAbout(about);
-        // Set default rating/image for now
+
         if (profile.getRating() == null)
             profile.setRating(0.0);
 
@@ -61,9 +76,11 @@ public class ProfileController {
             user.get().setProfileCompleted(true);
             userRepository.save(user.get());
         }
+
         return ResponseEntity.ok(Map.of("message", "Profile updated successfully", "profile", profile));
     }
 
+    // Get a guide's public profile — viewable by anyone who is logged in
     @GetMapping("/guide/{userId}")
     public ResponseEntity<?> getGuideProfile(@PathVariable Long userId) {
         Optional<User> user = userRepository.findById(userId);
@@ -77,9 +94,17 @@ public class ProfileController {
         return ResponseEntity.status(404).body("Profile not found");
     }
 
+    // Create or update a traveler's profile
+    // Security: You can only update YOUR OWN profile
     @PostMapping("/traveler")
-    public ResponseEntity<?> createOrUpdateTravelerProfile(@RequestBody Map<String, Object> payload) {
+    public ResponseEntity<?> createOrUpdateTravelerProfile(@RequestBody Map<String, Object> payload,
+            HttpServletRequest httpRequest) {
+
         Long userId = Long.valueOf(payload.get("userId").toString());
+
+        // SECURITY: The logged-in user must match the userId in the request body
+        ownershipValidator.requireOwnership(httpRequest, userId);
+
         String location = (String) payload.get("location");
 
         Optional<User> user = userRepository.findById(userId);
@@ -100,15 +125,18 @@ public class ProfileController {
             profile.setImageUrl(
                     "https://upload.wikimedia.org/wikipedia/commons/7/7c/Profile_avatar_placeholder_large.png");
         }
+
         travelerProfileRepository.save(profile);
 
         if (!user.get().isProfileCompleted()) {
             user.get().setProfileCompleted(true);
             userRepository.save(user.get());
         }
+
         return ResponseEntity.ok(Map.of("message", "Profile updated successfully", "profile", profile));
     }
 
+    // Get a traveler's public profile — viewable by anyone who is logged in
     @GetMapping("/traveler/{userId}")
     public ResponseEntity<?> getTravelerProfile(@PathVariable Long userId) {
         Optional<User> user = userRepository.findById(userId);
