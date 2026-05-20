@@ -27,7 +27,7 @@ public class BookingRequestDTO {
         this.cancellationReason = null;
     }
 
-    // Getters and Setters
+    
     public Long getId() {
         return id;
     }

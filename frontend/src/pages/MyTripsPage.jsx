@@ -9,7 +9,7 @@ function MyTripsPage() {
     const [posts, setPosts] = useState([]);
     const [isLoading, setIsLoading] = useState(true);
 
-    // Form state
+    
     const [destination, setDestination] = useState('');
     const [tripDates, setTripDates] = useState('');
     const [description, setDescription] = useState('');
@@ -63,7 +63,7 @@ function MyTripsPage() {
                 tripDates,
                 description
             });
-            // Clear form and refresh list
+            
             setDestination('');
             setTripDates('');
             setDescription('');
@@ -79,7 +79,7 @@ function MyTripsPage() {
         if (window.confirm('Are you sure you want to cancel this trip post?')) {
             try {
                 await updateTripPostStatus(postId, 'CANCELLED');
-                fetchPosts(); // Refresh list to show updated status
+                fetchPosts(); 
             } catch (err) {
                 console.error("Failed to cancel post", err);
                 alert("Could not cancel post.");
@@ -103,7 +103,7 @@ function MyTripsPage() {
 
             <div style={{ display: 'grid', gridTemplateColumns: '1fr 1.5fr', gap: '3rem', alignItems: 'start' }}>
 
-                {/* CREATE NEW TRIP FORM */}
+                {}
                 <div className="glass-panel" style={{ padding: '2.5rem' }}>
                     <h2 style={{ marginTop: 0, marginBottom: '2rem', color: '#fff', fontSize: '1.6rem' }}>Post a New Trip</h2>
 
@@ -160,7 +160,7 @@ function MyTripsPage() {
                     </form>
                 </div>
 
-                {/* TRIP HISTORY FEED */}
+                {}
                 <div>
                     <h2 style={{ marginTop: 0, marginBottom: '2rem', fontSize: '1.6rem', color: '#fff' }}>Your Posted Trips</h2>
 
@@ -176,7 +176,7 @@ function MyTripsPage() {
                         <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
                             {posts.map(post => (
                                 <div key={post.id} className="card" style={{ padding: '2rem', position: 'relative', overflow: 'hidden' }}>
-                                    {/* Status Ribbon/Badge */}
+                                    {}
                                     <div style={{ position: 'absolute', top: '20px', right: '20px', padding: '6px 14px', borderRadius: '50px', background: 'rgba(0,0,0,0.4)', fontSize: '0.85rem', border: '1px solid var(--surface-border)', ...getStatusStyle(post.status) }}>
                                         {post.status}
                                     </div>

@@ -8,13 +8,13 @@ function ChatBox({ bookingRequestId, currentUserId, otherUserId, otherUserName, 
     const [isLoading, setIsLoading] = useState(true);
     const messagesEndRef = useRef(null);
 
-    // Auto-scroll to bottom whenever messages change
+    
     useEffect(() => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     }, [messages]);
 
     useEffect(() => {
-        // 1. Fetch History
+        
         getChatHistory(bookingRequestId, currentUserId)
             .then(history => {
                 setMessages(history);
@@ -25,11 +25,11 @@ function ChatBox({ bookingRequestId, currentUserId, otherUserId, otherUserName, 
                 setIsLoading(false);
             });
 
-        // 2. Connect to WebSockets for live messages
+        
         connectWebSocket(
             currentUserId,
             (incomingMessage) => {
-                // When a live message arrives, append it to the chat!
+                
                 setMessages(prevMessages => [...prevMessages, incomingMessage]);
             },
             (error) => {
@@ -37,7 +37,7 @@ function ChatBox({ bookingRequestId, currentUserId, otherUserId, otherUserName, 
             }
         );
 
-        // 3. Cleanup: disconnect when the user closes the chat window
+        
         return () => {
             disconnectWebSocket();
         };
@@ -55,10 +55,10 @@ function ChatBox({ bookingRequestId, currentUserId, otherUserId, otherUserName, 
             timestamp: new Date().toISOString()
         };
 
-        // Send down the WebSocket tunnel
+        
         sendMessage(messageData);
 
-        // Optimistically add it to our own screen instantly
+        
         setMessages(prev => [...prev, messageData]);
         setNewMessage('');
     };
@@ -71,14 +71,14 @@ function ChatBox({ bookingRequestId, currentUserId, otherUserId, otherUserName, 
             boxShadow: '0 12px 40px rgba(0,0,0,0.6)', zIndex: 1000, overflow: 'hidden',
             backdropFilter: 'blur(10px)'
         }}>
-            {/* Chat Header */}
+            {}
             <div style={{
                 padding: '1rem', background: 'var(--primary-color)', color: '#000',
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                 borderBottom: '1px solid rgba(0,0,0,0.1)'
             }}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    {/* Simple Avatar Placeholder */}
+                    {}
                     <div style={{
                         width: '35px', height: '35px', borderRadius: '50%',
                         background: '#000', color: 'var(--primary-color)',
@@ -100,7 +100,7 @@ function ChatBox({ bookingRequestId, currentUserId, otherUserId, otherUserName, 
                 >✖</button>
             </div>
 
-            {/* Chat Messages Log */}
+            {}
             <div style={{
                 flex: 1, padding: '1rem', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '10px'
             }}>
@@ -130,7 +130,7 @@ function ChatBox({ bookingRequestId, currentUserId, otherUserId, otherUserName, 
                 <div ref={messagesEndRef} />
             </div>
 
-            {/* Message Input Box */}
+            {}
             <form onSubmit={handleSend} style={{
                 padding: '12px', background: 'rgba(0,0,0,0.2)', display: 'flex', gap: '10px',
                 borderTop: '1px solid rgba(255,255,255,0.1)'

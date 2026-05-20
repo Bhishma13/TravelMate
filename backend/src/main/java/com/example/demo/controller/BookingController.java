@@ -35,21 +35,21 @@ public class BookingController {
     @Autowired
     private OwnershipValidator ownershipValidator;
 
-    // Create a new booking request
-    // Security: The logged-in user must be the traveler making the request
+    
+    
     @PostMapping("/request")
     public ResponseEntity<?> createRequest(@RequestBody Map<String, Object> payload,
             HttpServletRequest httpRequest) {
         try {
             Long travelerId = Long.parseLong(payload.get("travelerId").toString());
 
-            // SECURITY: Verify the logged-in user IS the traveler in the request
+            
             ownershipValidator.requireOwnership(httpRequest, travelerId);
 
             Long guideId = Long.parseLong(payload.get("guideId").toString());
             String tripDates = payload.get("tripDates").toString();
 
-            // Check if there is an existing active booking with this guide
+            
             List<BookingRequest> existingRequests = bookingRepository.findByTravelerId(travelerId);
             boolean hasActive = existingRequests.stream().anyMatch(r -> r.getGuideId().equals(guideId) &&
                     (r.getStatus().equals("PENDING") || r.getStatus().equals("ACCEPTED")));
@@ -75,13 +75,13 @@ public class BookingController {
         }
     }
 
-    // Get all requests for a specific guide
-    // Security: Only the guide themselves can see their own requests
+    
+    
     @GetMapping("/guide/{guideId}")
     public ResponseEntity<?> getGuideRequests(@PathVariable Long guideId,
             HttpServletRequest httpRequest) {
 
-        // SECURITY: Logged-in user must be this guide
+        
         ownershipValidator.requireOwnership(httpRequest, guideId);
 
         List<BookingRequest> requests = bookingRepository.findByGuideId(guideId);
@@ -108,13 +108,13 @@ public class BookingController {
         return ResponseEntity.ok(dtoList);
     }
 
-    // Get all requests a traveler has sent
-    // Security: Only the traveler themselves can see their own requests
+    
+    
     @GetMapping("/traveler/{travelerId}")
     public ResponseEntity<?> getTravelerRequests(@PathVariable Long travelerId,
             HttpServletRequest httpRequest) {
 
-        // SECURITY: Logged-in user must be this traveler
+        
         ownershipValidator.requireOwnership(httpRequest, travelerId);
 
         List<BookingRequest> requests = bookingRepository.findByTravelerId(travelerId);
@@ -141,8 +141,8 @@ public class BookingController {
         return ResponseEntity.ok(dtoList);
     }
 
-    // Update the status of a request (Guide accepting/declining or Traveler cancelling)
-    // Security: Only the traveler or guide who are part of this booking can update it
+    
+    
     @PutMapping("/request/{requestId}/status")
     public ResponseEntity<?> updateRequestStatus(@PathVariable Long requestId,
             @RequestBody Map<String, String> payload,
@@ -161,7 +161,7 @@ public class BookingController {
 
             BookingRequest bookingRequest = requestOpt.get();
 
-            // SECURITY: The logged-in user must be either the traveler or the guide in this booking
+            
             User requester = ownershipValidator.getRequester(httpRequest);
             boolean isTraveler = requester.getId().equals(bookingRequest.getTravelerId());
             boolean isGuide = requester.getId().equals(bookingRequest.getGuideId());
@@ -170,8 +170,8 @@ public class BookingController {
                 return ResponseEntity.status(403).body("Access denied: you are not part of this booking");
             }
 
-            // Guard: if tripPostId exists and traveler is trying to accept,
-            // make sure no other booking for this post is already ACCEPTED
+            
+            
             if (newStatus.equals("ACCEPTED") && bookingRequest.getTripPostId() != null) {
                 List<BookingRequest> otherAccepted = bookingRepository
                         .findByTripPostIdAndStatusAndIdNot(bookingRequest.getTripPostId(), "ACCEPTED", requestId);
@@ -181,7 +181,7 @@ public class BookingController {
                 }
             }
 
-            // If CANCELLED, save the reason provided
+            
             if (newStatus.equals("CANCELLED")) {
                 String reason = payload.get("cancellationReason");
                 bookingRequest.setCancellationReason(reason != null ? reason : "No reason provided");
@@ -190,9 +190,9 @@ public class BookingController {
             bookingRequest.setStatus(newStatus);
             BookingRequest updatedRequest = bookingRepository.save(bookingRequest);
 
-            // If a Trip Post proposal was just ACCEPTED:
-            // 1. Mark the TripPost as FULFILLED (off the job board)
-            // 2. Auto-DECLINE all other PENDING proposals for the same TripPost
+            
+            
+            
             if (newStatus.equals("ACCEPTED") && bookingRequest.getTripPostId() != null) {
                 Optional<TripPost> tripPostOpt = tripPostRepository.findById(bookingRequest.getTripPostId());
                 if (tripPostOpt.isPresent()) {

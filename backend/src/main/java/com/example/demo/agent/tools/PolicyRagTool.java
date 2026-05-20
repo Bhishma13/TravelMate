@@ -10,16 +10,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * Spring AI Tool — wraps the existing PgVector RAG pipeline as an agent tool.
- *
- * <p>This is the key bridge between the old system and the new agentic one.
- * Instead of always running RAG, Gemini now <em>decides</em> to call this tool
- * only when the question is about TravelMate policies or FAQs.
- *
- * <p>The existing {@link EmbeddingService} and {@link KnowledgeChunkRepository}
- * are reused unchanged — zero regression risk.
- */
+
 @Component
 public class PolicyRagTool {
 

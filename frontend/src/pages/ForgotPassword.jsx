@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 
 function ForgotPassword() {
     const [email, setEmail] = useState('');
-    const [status, setStatus] = useState(''); // 'success' | 'error' | ''
+    const [status, setStatus] = useState(''); 
     const [message, setMessage] = useState('');
     const [loading, setLoading] = useState(false);
 

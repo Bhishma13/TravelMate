@@ -32,7 +32,7 @@ public class KafkaProducerConfig {
         config.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
         config.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, JsonSerializer.class);
 
-        // Aiven SASL_SSL Security
+        
         config.put("security.protocol", "SASL_SSL");
         config.put("sasl.mechanism", "SCRAM-SHA-256");
         config.put("sasl.jaas.config",

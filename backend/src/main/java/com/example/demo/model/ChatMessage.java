@@ -16,7 +16,7 @@ public class ChatMessage {
     private Long id;
 
     @Column(nullable = false)
-    private Long bookingRequestId; // The specific trip this chat belongs to
+    private Long bookingRequestId; 
 
     @Column(nullable = false)
     private Long senderId;

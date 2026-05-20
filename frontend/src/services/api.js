@@ -76,7 +76,7 @@ export const getUsersByRole = async (role, page = 0, size = 10, location = '') =
 export const getGuideProfile = async (userId) => {
     const response = await fetch(`${BASE_URL}/profile/guide/${userId}`, { headers: getAuthHeaders() });
     if (!response.ok) {
-        if (response.status === 404) return null; // Handle profile not found gracefully
+        if (response.status === 404) return null; 
         const errorText = await response.text();
         throw new Error(errorText || 'Failed to fetch profile');
     }
@@ -99,7 +99,7 @@ export const updateTravelerProfile = async (profileData) => {
 export const getTravelerProfile = async (userId) => {
     const response = await fetch(`${BASE_URL}/profile/traveler/${userId}`, { headers: getAuthHeaders() });
     if (!response.ok) {
-        if (response.status === 404) return null; // Handle profile not found gracefully
+        if (response.status === 404) return null; 
         const errorText = await response.text();
         throw new Error(errorText || 'Failed to fetch profile');
     }

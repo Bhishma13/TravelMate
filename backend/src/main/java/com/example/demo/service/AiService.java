@@ -26,7 +26,7 @@ public class AiService {
 
     public String generateEnhancedText(String prompt) {
         try {
-            // Build the Gemini API Request Body
+            
             Map<String, Object> requestBody = Map.of(
                     "contents", List.of(
                             Map.of("parts", List.of(
@@ -47,7 +47,7 @@ public class AiService {
                 return "AI Enhancement failed right now. Please try again.";
             }
 
-            // Parse response
+            
             JsonNode rootNode = objectMapper.readTree(response.body());
             JsonNode candidates = rootNode.path("candidates");
             if (candidates.isArray() && candidates.size() > 0) {

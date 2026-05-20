@@ -25,7 +25,7 @@ public class SendGridService {
     public void sendEmail(String toEmail, String subject, String contentValue, boolean isHtml) {
         String url = "https://api.sendgrid.com/v3/mail/send";
 
-        // Construct SendGrid V3 JSON Payload
+        
         Map<String, Object> body = new HashMap<>();
         
         Map<String, String> from = new HashMap<>();

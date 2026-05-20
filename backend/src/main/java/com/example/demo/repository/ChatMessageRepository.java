@@ -9,7 +9,7 @@ import java.util.List;
 @Repository
 public interface ChatMessageRepository extends JpaRepository<ChatMessage, Long> {
 
-    // Fetch all messages for a specific trip, ordered by when they were sent
+    
     List<ChatMessage> findByBookingRequestIdOrderByTimestampAsc(Long bookingRequestId);
 
 }

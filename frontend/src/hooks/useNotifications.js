@@ -3,12 +3,7 @@ import { useAuth } from '../context/AuthContext';
 
 const BASE_URL = `${import.meta.env.VITE_API_URL || 'http://localhost:8081'}/api`;
 
-/**
- * Polls the backend every 30 seconds for pending notification counts.
- * Returns { pending: number } — the count of items needing the user's attention.
- *   - Traveler: PENDING Guide proposals on their trip posts
- *   - Guide:    PENDING Traveler direct requests
- */
+
 export function useNotifications() {
     const { user } = useAuth();
     const [pending, setPending] = useState(0);
@@ -22,15 +17,15 @@ export function useNotifications() {
                 setPending(data.pending || 0);
             }
         } catch {
-            // Silently fail — don't disrupt the user's session
+            
         }
     }, [user]);
 
     useEffect(() => {
-        fetchCount(); // Fetch immediately on mount / user change
+        fetchCount(); 
 
-        const interval = setInterval(fetchCount, 30000); // Poll every 30 seconds
-        return () => clearInterval(interval); // Cleanup on unmount
+        const interval = setInterval(fetchCount, 30000); 
+        return () => clearInterval(interval); 
     }, [fetchCount]);
 
     return { pending, refresh: fetchCount };

@@ -29,14 +29,14 @@ function MyBookingsPage() {
     const [activeTab, setActiveTab] = useState('proposals');
     const [activeChatBooking, setActiveChatBooking] = useState(null);
 
-    // Review Modal
+    
     const [isReviewOpen, setIsReviewOpen] = useState(false);
     const [reviewTrip, setReviewTrip] = useState(null);
     const [rating, setRating] = useState(5);
     const [comment, setComment] = useState('');
     const [reviewSubmitting, setReviewSubmitting] = useState(false);
 
-    // Cancel Modal
+    
     const [cancelTarget, setCancelTarget] = useState(null);
     const [cancelReason, setCancelReason] = useState('');
     const [cancelSubmitting, setCancelSubmitting] = useState(false);
@@ -101,13 +101,13 @@ function MyBookingsPage() {
         finally { setReviewSubmitting(false); }
     };
 
-    // tripPostId != null → Guide's proposal to Traveler's trip post (Incoming Proposals tab)
-    // tripPostId == null → Traveler directly contacted a Guide (My Requests tab)
+    
+    
     const incomingProposals = allBookings.filter(b => b.tripPostId != null);
     const myRequests = allBookings.filter(b => b.tripPostId == null);
     const displayList = activeTab === 'proposals' ? incomingProposals : myRequests;
 
-    const tabStyle = (tab) => ({}); // Obsolete now, replaced by classNames
+    const tabStyle = (tab) => ({}); 
 
     if (isLoading) return <div className="dashboard-container"><h2 style={{ textAlign: 'center' }}>Loading...</h2></div>;
 
@@ -122,7 +122,7 @@ function MyBookingsPage() {
 
             {error && <p style={{ color: 'var(--error-color)', textAlign: 'center' }}>{error}</p>}
 
-            {/* TABS */}
+            {}
             <div className="tabs-container">
                 <button className={`tab-button ${activeTab === 'proposals' ? 'active' : ''}`} onClick={() => setActiveTab('proposals')}>
                     Guide Proposals
@@ -137,7 +137,7 @@ function MyBookingsPage() {
                 </button>
             </div>
 
-            {/* CONTENT */}
+            {}
             <div className="cards-grid">
                 {displayList.length === 0 ? (
                     <div className="empty-state" style={{ gridColumn: '1 / -1' }}>
@@ -186,21 +186,21 @@ function MyBookingsPage() {
                             </div>
 
                             <div style={{ padding: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                {/* Chat available for PENDING proposals and ACCEPTED bookings */}
+                                {}
                                 {(book.status === 'PENDING' || book.status === 'ACCEPTED') && activeTab === 'proposals' && (
                                     <button className="cta-button btn-warning" style={{ margin: 0, fontSize: '0.9rem' }} onClick={() => setActiveChatBooking(book)}>
                                         Chat with this Guide
                                     </button>
                                 )}
 
-                                {/* Chat for My Requests (Traveler contacted Guide) - only when ACCEPTED */}
+                                {}
                                 {book.status === 'ACCEPTED' && activeTab === 'myRequests' && (
                                     <button className="cta-button btn-warning" style={{ margin: 0, fontSize: '0.9rem' }} onClick={() => setActiveChatBooking(book)}>
                                         Chat
                                     </button>
                                 )}
 
-                                {/* CANCEL — available on any ACCEPTED booking */}
+                                {}
                                 {book.status === 'ACCEPTED' && (
                                     <button
                                         className="btn-outline-danger"
@@ -211,7 +211,7 @@ function MyBookingsPage() {
                                     </button>
                                 )}
 
-                                {/* CHOOSE THIS GUIDE — only for PENDING proposals in the Incoming tab */}
+                                {}
                                 {activeTab === 'proposals' && book.status === 'PENDING' && (
                                     <button
                                         className="cta-button btn-success"
@@ -226,7 +226,7 @@ function MyBookingsPage() {
                                     </button>
                                 )}
 
-                                {/* Decline a proposal you don't want */}
+                                {}
                                 {activeTab === 'proposals' && book.status === 'PENDING' && (
                                     <button
                                         className="btn-outline-danger"
@@ -242,7 +242,7 @@ function MyBookingsPage() {
                 )}
             </div>
 
-            {/* Cancel Booking Modal */}
+            {}
             {cancelTarget && (
                 <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(5px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, padding: '1rem' }}>
                     <div className="glass-panel" style={{ maxWidth: '440px', width: '100%', border: '1px solid var(--error-color)' }}>
@@ -280,7 +280,7 @@ function MyBookingsPage() {
                 </div>
             )}
 
-            {/* Review Modal */}
+            {}
             {isReviewOpen && (
                 <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(5px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, padding: '1rem' }}>
                     <div className="glass-panel" style={{ maxWidth: '440px', width: '100%', border: '1px solid var(--primary-color)' }}>

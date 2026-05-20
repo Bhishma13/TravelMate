@@ -10,15 +10,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
-/**
- * OwnershipValidator — reusable security helper.
- *
- * Extracts the JWT from the Authorization header, decodes the email,
- * looks up the User in the DB, and returns it.
- *
- * Controllers call getRequester() to get the logged-in user, then
- * compare their ID against the ID in the URL/body to enforce ownership.
- */
+
 @Component
 public class OwnershipValidator {
 
@@ -28,10 +20,7 @@ public class OwnershipValidator {
     @Autowired
     private UserRepository userRepository;
 
-    /**
-     * Extracts and returns the User who made this HTTP request, based on their JWT token.
-     * Throws 401 if the token is missing/invalid, or 404 if the user no longer exists.
-     */
+    
     public User getRequester(HttpServletRequest request) {
         String authHeader = request.getHeader("Authorization");
         if (authHeader == null || !authHeader.startsWith("Bearer ")) {
@@ -54,10 +43,7 @@ public class OwnershipValidator {
         return user.get();
     }
 
-    /**
-     * Convenience method: gets the requester AND asserts they own the given ID.
-     * Throws 403 Forbidden if the logged-in user's ID does not match the expectedOwnerId.
-     */
+    
     public User requireOwnership(HttpServletRequest request, Long expectedOwnerId) {
         User requester = getRequester(request);
         if (!requester.getId().equals(expectedOwnerId)) {

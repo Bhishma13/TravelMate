@@ -3,11 +3,7 @@ import './ChatWidget.css';
 
 const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8081';
 
-/**
- * Derive a stable sessionId for conversation memory.
- * - Logged-in users: use their numeric userId (stored in localStorage by the auth flow).
- * - Anonymous users: generate a UUID once per browser session stored in sessionStorage.
- */
+
 function getSessionId() {
   const userId = localStorage.getItem('userId');
   if (userId) return `user-${userId}`;
@@ -79,15 +75,10 @@ function ChatWidget() {
     'Open trips to Manali'
   ];
 
-  /**
-   * Render a bot message, converting any /post/{id} or /guide/{id}
-   * paths into real clickable buttons.
-   * - Logged-in users: go directly to the page
-   * - Not logged in: go to /signin?redirect=/post/5 so after login they return
-   */
+  
   function renderBotMessage(text) {
     const isLoggedIn = !!localStorage.getItem('userId');
-    // Split on /post/{id} or /guide/{id} patterns
+    
     const parts = text.split(/(\/(post|guide)\/\d+)/g);
     const elements = [];
     let i = 0;
@@ -112,7 +103,7 @@ function ChatWidget() {
         );
         i++;
       } else if (part === 'post' || part === 'guide') {
-        // Captured group from regex split — skip
+        
         i++;
       } else if (part) {
         elements.push(<span key={i}>{part}</span>);
@@ -126,7 +117,7 @@ function ChatWidget() {
 
   return (
     <div className="chat-widget">
-      {/* Chat Panel */}
+      {}
       {isOpen && (
         <div className="chat-panel">
           <div className="chat-header">
@@ -162,7 +153,7 @@ function ChatWidget() {
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Quick Question Chips — show only if no user messages yet */}
+          {}
           {messages.length <= 1 && (
             <div className="quick-questions">
               {quickQuestions.map((q, i) => (
@@ -198,7 +189,7 @@ function ChatWidget() {
         </div>
       )}
 
-      {/* Rectangular Banner Trigger */}
+      {}
       {!isOpen && (
         <button className="chat-banner" onClick={() => setIsOpen(true)}>
           <span className="chat-banner-icon">✨</span>

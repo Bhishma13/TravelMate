@@ -21,14 +21,14 @@ public class User {
     private String email;
     private String phone;
     private String password;
-    private String role; // "guide" or "traveler"
+    private String role; 
 
-    // Guide specific
+    
     private String adhaar;
 
     private boolean profileCompleted = false;
 
-    // Forgot-password flow
+    
     private String resetToken;
     private LocalDateTime resetTokenExpiry;
 }

@@ -10,12 +10,7 @@ import org.springframework.stereotype.Component;
 
 import java.util.List;
 
-/**
- * Spring AI Tool — lets Gemini search for guides in a given location.
- *
- * <p>Gemini calls this when the user asks something like
- * "Are there any guides in Goa?" or "Find me a guide for Manali".
- */
+
 @Component
 public class GuideSearchTool {
 

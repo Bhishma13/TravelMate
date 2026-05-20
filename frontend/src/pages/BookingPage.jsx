@@ -9,7 +9,7 @@ function BookingPage() {
     const { guideId } = useParams();
     const location = useLocation();
 
-    // The guide's name/data passed from the Dashboard so we don't need a DB lookup here
+    
     const guideName = location.state?.guideName || "this guide";
 
     const [tripDates, setTripDates] = useState('');
@@ -58,7 +58,7 @@ function BookingPage() {
                 guideId: parseInt(guideId, 10),
                 tripDates: tripDates
             });
-            // Show a quick success alert and bounce back to Dashboard
+            
             alert(`Booking Request sent to ${guideName}!`);
             navigate('/dashboard');
         } catch (err) {

@@ -8,8 +8,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    // Set APP_FRONTEND_URL on Render to your Vercel URL e.g.
-    // https://travelmate.vercel.app
+    
+    
     @Value("${app.frontend-url:http://localhost:3000}")
     private String frontendUrl;
 

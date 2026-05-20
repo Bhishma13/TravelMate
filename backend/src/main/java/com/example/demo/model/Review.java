@@ -16,7 +16,7 @@ public class Review {
     private Long id;
 
     @Column(nullable = false)
-    private Long bookingRequestId; // Links to the specific trip
+    private Long bookingRequestId; 
 
     @Column(nullable = false)
     private Long travelerId;
@@ -25,7 +25,7 @@ public class Review {
     private Long guideId;
 
     @Column(nullable = false)
-    private Integer rating; // 1 to 5 stars
+    private Integer rating; 
 
     @Column(length = 2000)
     private String comment;

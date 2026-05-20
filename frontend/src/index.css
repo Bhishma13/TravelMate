@@ -7,26 +7,26 @@
 
   color-scheme: light;
   --primary-color: #0d9488;
-  /* Teal */
+  
   --primary-hover: #0f766e;
   --primary-light: #ccfbf1;
-  /* Very light teal bg */
+  
   --secondary-color: #64748b;
-  /* Slate gray */
+  
   --accent-color: #6366f1;
-  /* Indigo accent */
+  
 
   --bg-light: #f8fafc;
-  /* Almost white */
+  
   --surface-color: #ffffff;
   --surface-border: #e2e8f0;
 
   --text-main: #0f172a;
-  /* Near black */
+  
   --text-secondary: #475569;
-  /* Medium slate */
+  
   --text-muted: #94a3b8;
-  /* Muted */
+  
 
   --error-color: #ef4444;
   --success-color: #10b981;
@@ -41,13 +41,13 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* --- BASE --- */
+
 body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
   background-color: var(--bg-light);
-  /* Subtle dot-grid background like the reference */
+  
   background-image: radial-gradient(circle, #cbd5e1 1px, transparent 1px);
   background-size: 28px 28px;
   background-attachment: fixed;
@@ -62,7 +62,7 @@ body {
   flex-direction: column;
 }
 
-/* --- TYPOGRAPHY --- */
+
 h1,
 h2,
 h3,
@@ -83,7 +83,7 @@ a:hover {
   color: var(--primary-hover);
 }
 
-/* --- SURFACE PANEL (replaces old glass-panel) --- */
+
 .glass-panel {
   background: var(--surface-color);
   border: 1px solid var(--surface-border);
@@ -91,7 +91,7 @@ a:hover {
   border-radius: 20px;
 }
 
-/* --- AUTH CARDS --- */
+
 .auth-container {
   background: var(--surface-color);
   border: 1px solid var(--surface-border);
@@ -112,7 +112,7 @@ a:hover {
   font-weight: 800;
 }
 
-/* --- DEFAULT CARDS --- */
+
 .card {
   background: var(--surface-color);
   border-radius: 20px;
@@ -148,7 +148,7 @@ a:hover {
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 }
 
-/* --- FORMS & INPUTS --- */
+
 .form-group {
   margin-bottom: 1.5rem;
   text-align: left;
@@ -192,7 +192,7 @@ a:hover {
   box-shadow: 0 0 0 3px rgba(13, 148, 136, 0.12);
 }
 
-/* --- BUTTONS --- */
+
 button {
   width: 100%;
   border-radius: 10px;
@@ -206,7 +206,7 @@ button {
   margin-top: 0.5rem;
   box-sizing: border-box;
 
-  /* Primary — Dark solid (like reference "Get started" button) */
+  
   background: var(--text-main);
   color: #ffffff;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.08);
@@ -230,7 +230,7 @@ button:disabled {
   transform: none;
 }
 
-/* Outline variant */
+
 button.outline {
   background: transparent;
   border: 1.5px solid var(--surface-border);
@@ -243,7 +243,7 @@ button.outline:hover {
   border-color: #94a3b8;
 }
 
-/* Teal primary variant */
+
 button.btn-primary-teal {
   background: var(--primary-color);
   color: #fff;
@@ -332,7 +332,7 @@ button.btn-outline-danger:hover {
   background: rgba(239, 68, 68, 0.08);
 }
 
-/* --- TAB STYLES --- */
+
 .tabs-container {
   display: flex;
   gap: 0.25rem;
@@ -371,7 +371,7 @@ button.btn-outline-danger:hover {
   box-shadow: none;
 }
 
-/* --- LAYOUT UTILITIES --- */
+
 .dashboard-container {
   padding: 2rem 4rem;
   width: 100%;
@@ -403,7 +403,7 @@ button.btn-outline-danger:hover {
   color: var(--text-muted);
 }
 
-/* --- ROLE SELECTION (SignUp) --- */
+
 .role-selection {
   display: flex;
   justify-content: center;
@@ -433,7 +433,7 @@ button.btn-outline-danger:hover {
   cursor: pointer;
 }
 
-/* --- SCROLLBAR --- */
+
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
@@ -452,7 +452,7 @@ button.btn-outline-danger:hover {
   background: #94a3b8;
 }
 
-/* --- HOME PAGE --- */
+
 .cta-button {
   width: auto;
   display: inline-flex;

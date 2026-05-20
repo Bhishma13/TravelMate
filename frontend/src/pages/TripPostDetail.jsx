@@ -7,7 +7,7 @@ const API_BASE = import.meta.env.VITE_API_URL || 'http://localhost:8081';
 
 function TripPostDetail() {
     const { state } = useLocation();
-    const { id } = useParams();          // ← from /post/:id (AI deep link)
+    const { id } = useParams();          
     const navigate = useNavigate();
     const { user } = useAuth();
 
@@ -15,13 +15,13 @@ function TripPostDetail() {
     const [loading, setLoading] = useState(false);
     const [fetchError, setFetchError] = useState(null);
 
-    // If user is not logged in, redirect to /signin and come back after login
+    
     if (!user) {
         const returnPath = id ? `/post/${id}` : '/dashboard';
         return <Navigate to={`/signin?redirect=${encodeURIComponent(returnPath)}`} />;
     }
 
-    // If we arrived via direct URL (/post/5) without router state, fetch the post by ID
+    
     useEffect(() => {
         if (!post && id) {
             fetch(`${API_BASE}/api/posts/${id}`, {

@@ -50,7 +50,7 @@ public class UserController {
         Page<User> usersPage = userRepository.findByRole(role, pageable);
         List<User> finalUsers = new ArrayList<>();
 
-        // If location is provided, we need to filter by location
+        
         if (location != null && !location.trim().isEmpty()) {
             if ("guide".equalsIgnoreCase(role)) {
                 Page<GuideProfile> profiles = guideProfileRepository.findByLocationContainingIgnoreCase(location,
@@ -84,7 +84,7 @@ public class UserController {
                     userData.put("about", profile.get().getAbout());
                     userData.put("image", profile.get().getImageUrl());
 
-                    // --- Calculate Dynamic Rating ---
+                    
                     List<Review> reviews = reviewRepository.findByGuideId(user.getId());
                     if (reviews.isEmpty()) {
                         userData.put("rating", 0.0);
@@ -95,8 +95,8 @@ public class UserController {
                             sum += r.getRating();
                         }
                         double avg = sum / reviews.size();
-                        // Format to 1 decimal place. We pass it as String to match frontend
-                        // expectations or parse to Double
+                        
+                        
                         userData.put("rating", Double.parseDouble(String.format("%.1f", avg)));
                         userData.put("reviewCount", reviews.size());
                     }

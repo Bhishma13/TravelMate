@@ -17,7 +17,7 @@ public class FileUploadController {
 
     private final Cloudinary cloudinary;
 
-    // Reads from application.properties → set via env vars on Render
+    
     public FileUploadController(
             @Value("${cloudinary.cloud-name}") String cloudName,
             @Value("${cloudinary.api-key}") String apiKey,
@@ -33,13 +33,13 @@ public class FileUploadController {
     @PostMapping
     public ResponseEntity<?> uploadFile(@RequestParam("file") MultipartFile file) {
         try {
-            // Upload directly to Cloudinary — returns a URL that works forever
+            
             @SuppressWarnings("unchecked")
             Map<String, Object> result = cloudinary.uploader().upload(
                     file.getBytes(),
                     ObjectUtils.asMap("resource_type", "image"));
 
-            String imageUrl = (String) result.get("secure_url"); // always HTTPS
+            String imageUrl = (String) result.get("secure_url"); 
             return ResponseEntity.ok(Map.of("imageUrl", imageUrl));
 
         } catch (IOException ex) {

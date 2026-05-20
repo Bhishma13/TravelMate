@@ -27,8 +27,8 @@ public class KnowledgeBaseLoader {
 
     @PostConstruct
     public void init() {
-        // Run asynchronously to prevent blocking the main thread during startup
-        // This avoids Render's "Port scan timeout" error
+        
+        
         java.util.concurrent.CompletableFuture.runAsync(this::loadKnowledgeBase);
     }
 
@@ -68,7 +68,7 @@ public class KnowledgeBaseLoader {
                     LOGGER.info("Indexed chunk {}: {}...", savedCount,
                             trimmedChunk.substring(0, Math.min(60, trimmedChunk.length())));
 
-                    // Reduced sleep to prevent rate limiting but keep it fast
+                    
                     Thread.sleep(100);
 
                 } catch (Exception e) {

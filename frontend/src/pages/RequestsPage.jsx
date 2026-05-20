@@ -29,7 +29,7 @@ function RequestsPage() {
     const [activeTab, setActiveTab] = useState('incoming');
     const [activeChatBooking, setActiveChatBooking] = useState(null);
 
-    // Cancel Modal
+    
     const [cancelTarget, setCancelTarget] = useState(null);
     const [cancelReason, setCancelReason] = useState('');
     const [cancelSubmitting, setCancelSubmitting] = useState(false);
@@ -79,13 +79,13 @@ function RequestsPage() {
         }
     };
 
-    // tripPostId == null → Traveler directly contacted Guide (Incoming Requests)
-    // tripPostId != null → Guide sent a Proposal to Traveler's trip post (My Proposals)
+    
+    
     const incomingRequests = allRequests.filter(r => r.tripPostId == null);
     const myProposals = allRequests.filter(r => r.tripPostId != null);
     const displayList = activeTab === 'incoming' ? incomingRequests : myProposals;
 
-    const tabStyle = (tab) => ({}); // Obsolete now, replaced by classNames
+    const tabStyle = (tab) => ({}); 
 
     if (isLoading) return <div className="dashboard-container"><h2 style={{ textAlign: 'center' }}>Loading...</h2></div>;
 
@@ -100,7 +100,7 @@ function RequestsPage() {
 
             {error && <p style={{ color: 'var(--error-color)', textAlign: 'center' }}>{error}</p>}
 
-            {/* TABS */}
+            {}
             <div className="tabs-container">
                 <button className={`tab-button ${activeTab === 'incoming' ? 'active' : ''}`} onClick={() => setActiveTab('incoming')}>
                     Traveler Requests
@@ -115,7 +115,7 @@ function RequestsPage() {
                 </button>
             </div>
 
-            {/* CARDS */}
+            {}
             <div className="cards-grid">
                 {displayList.length === 0 ? (
                     <div className="empty-state" style={{ gridColumn: '1 / -1' }}>
@@ -171,14 +171,14 @@ function RequestsPage() {
                             </div>
 
                             <div style={{ padding: '1rem', borderTop: '1px solid rgba(255,255,255,0.1)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-                                {/* Chat — on PENDING or ACCEPTED bookings */}
+                                {}
                                 {(req.status === 'PENDING' || req.status === 'ACCEPTED') && (
                                     <button className="cta-button btn-warning" style={{ margin: 0, fontSize: '0.9rem' }} onClick={() => setActiveChatBooking(req)}>
                                         Chat with Traveler
                                     </button>
                                 )}
 
-                                {/* INCOMING: Accept/Decline — Traveler booked you directly */}
+                                {}
                                 {activeTab === 'incoming' && req.status === 'PENDING' && (
                                     <>
                                         <button className="cta-button btn-success" style={{ margin: 0 }} onClick={() => handleStatusUpdate(req.id, 'ACCEPTED')}>
@@ -190,14 +190,14 @@ function RequestsPage() {
                                     </>
                                 )}
 
-                                {/* Mark as Completed */}
+                                {}
                                 {activeTab === 'incoming' && req.status === 'ACCEPTED' && (
                                     <button className="cta-button" style={{ margin: 0, background: 'linear-gradient(135deg, #2196F3 0%, #1976D2 100%)', color: '#fff', fontSize: '0.9rem' }} onClick={() => handleStatusUpdate(req.id, 'COMPLETED')}>
                                         Mark as Completed
                                     </button>
                                 )}
 
-                                {/* CANCEL — available on any ACCEPTED booking */}
+                                {}
                                 {req.status === 'ACCEPTED' && (
                                     <button
                                         className="btn-outline-danger"
@@ -213,7 +213,7 @@ function RequestsPage() {
                 )}
             </div>
 
-            {/* Cancel Booking Modal */}
+            {}
             {cancelTarget && (
                 <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.85)', backdropFilter: 'blur(5px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, padding: '1rem' }}>
                     <div className="glass-panel" style={{ maxWidth: '440px', width: '100%', border: '1px solid var(--error-color)' }}>

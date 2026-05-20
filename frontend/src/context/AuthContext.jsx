@@ -13,7 +13,7 @@ export const AuthProvider = ({ children }) => {
         return localStorage.getItem('token') || null;
     });
 
-    // Sync state changes back to localStorage
+    
     useEffect(() => {
         if (token) localStorage.setItem('token', token);
         else localStorage.removeItem('token');
@@ -39,8 +39,8 @@ export const AuthProvider = ({ children }) => {
     const register = async (userData) => {
         try {
             const data = await registerUser(userData);
-            // We usually let them login manually after registering,
-            // but if desired, we can capture the token here too.
+            
+            
             return data;
         } catch (error) {
             console.error("Registration error:", error);

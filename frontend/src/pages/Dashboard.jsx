@@ -17,10 +17,10 @@ function Dashboard() {
     const [searchTerm, setSearchTerm] = React.useState('');
     const [activeSearch, setActiveSearch] = React.useState('');
     const [isLoading, setIsLoading] = React.useState(true);
-    const { pending: notifCount } = useNotifications(); // poll backend every 30s
+    const { pending: notifCount } = useNotifications(); 
 
-    // Fetch profile data when opening the profile view
-    // Fetch profile data when opening the profile view
+    
+    
     React.useEffect(() => {
         if (showProfileView && user) {
             if (user.role === 'guide') {
@@ -50,7 +50,7 @@ function Dashboard() {
                             filteredData = data.filter(post => post.destination.toLowerCase().includes(activeSearch.toLowerCase()));
                         }
                         setDataToShow(filteredData);
-                        setTotalPages(1); // No pagination for job board yet
+                        setTotalPages(1); 
                     })
                     .catch(err => console.error(`Failed to load open board posts`, err))
                     .finally(() => setIsLoading(false));
@@ -86,8 +86,8 @@ function Dashboard() {
 
     const handleSearchSubmit = (e) => {
         e.preventDefault();
-        setCurrentPage(0); // Reset to first page
-        setActiveSearch(searchTerm); // Trigger fetch
+        setCurrentPage(0); 
+        setActiveSearch(searchTerm); 
     };
 
     if (!user) {
@@ -121,7 +121,7 @@ function Dashboard() {
 
                 <div className="header-right" style={{ display: 'flex', justifyContent: 'flex-end', gap: '1rem', alignItems: 'center', flexWrap: 'wrap' }}>
                     {isGuide ? (
-                        // Badge wrapper for Guide's booking button
+                        
                         <div style={{ position: 'relative', display: 'inline-block' }}>
                             <button
                                 onClick={() => navigate('/requests')}
@@ -152,7 +152,7 @@ function Dashboard() {
                             >
                                 Post a Trip
                             </button>
-                            {/* Badge wrapper for Traveler's active bookings button */}
+                            {}
                             <div style={{ position: 'relative', display: 'inline-block' }}>
                                 <button
                                     onClick={() => navigate('/my-bookings')}
@@ -198,7 +198,7 @@ function Dashboard() {
                 </div>
             </header>
 
-            {/* User Profile View Modal/Section */}
+            {}
             {showProfileView && (isGuide ? guideProfile : travelerProfile) && (
                 <div className="glass-panel" style={{
                     padding: '2.5rem',
@@ -263,18 +263,18 @@ function Dashboard() {
                 </div>
             )}
 
-            {/* User Profile View Modal/Section */}
+            {}
 
             <h2 style={{ textAlign: 'left', marginBottom: '1.5rem' }}>{title}</h2>
 
             <div className="cards-grid">
                 {isLoading ? (
-                    // Render 6 skeleton cards while waiting for data
+                    
                     Array.from({ length: 6 }).map((_, index) => (
                         <div key={index} className="skeleton-card"></div>
                     ))
                 ) : dataToShow.length === 0 ? (
-                    // Beautiful Empty State Design
+                    
                     <div className="empty-state">
                         <div style={{ fontSize: '4rem', marginBottom: '1rem', opacity: 0.5 }}>🏜️</div>
                         <h3 style={{ fontSize: '1.5rem', color: '#fff', marginBottom: '0.5rem' }}>No profiles found</h3>

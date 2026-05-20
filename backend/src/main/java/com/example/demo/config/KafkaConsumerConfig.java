@@ -37,7 +37,7 @@ public class KafkaConsumerConfig {
         config.put(ConsumerConfig.VALUE_DESERIALIZER_CLASS_CONFIG, JsonDeserializer.class);
         config.put(JsonDeserializer.TRUSTED_PACKAGES, "*");
 
-        // Aiven SASL_SSL Security
+        
         config.put("security.protocol", "SASL_SSL");
         config.put("sasl.mechanism", "SCRAM-SHA-256");
         config.put("sasl.jaas.config",

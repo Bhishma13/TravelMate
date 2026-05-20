@@ -9,7 +9,7 @@ function WhyTravelMate() {
     return (
         <div className="home-container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
 
-            {/* NAVBAR */}
+            {}
             <nav style={{
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                 padding: '1.5rem 4rem', borderBottom: '1px solid rgba(255,255,255,0.05)',
@@ -32,7 +32,7 @@ function WhyTravelMate() {
                 </div>
             </nav>
 
-            {/* HERO CONTENT */}
+            {}
             <div style={{ maxWidth: '1000px', margin: '6rem auto', padding: '0 2rem', textAlign: 'center' }}>
                 <h4 style={{ color: 'var(--primary-color)', textTransform: 'uppercase', letterSpacing: '2px', marginBottom: '1rem', fontWeight: 600 }}>The TravelMate Vision</h4>
                 <h1 style={{ fontSize: '4.5rem', fontWeight: '800', lineHeight: '1.1', marginBottom: '2rem', letterSpacing: '-1.5px' }}>

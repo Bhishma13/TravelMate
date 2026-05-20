@@ -23,15 +23,15 @@ public class NotificationController {
     @Autowired
     private OwnershipValidator ownershipValidator;
 
-    // Get the notification count for a user
-    // Security: You can only see YOUR OWN notification count
+    
+    
     @GetMapping("/count")
     public ResponseEntity<?> getNotificationCount(
             @RequestParam Long userId,
             @RequestParam String role,
             HttpServletRequest httpRequest) {
         try {
-            // SECURITY: The logged-in user must match the userId being queried
+            
             ownershipValidator.requireOwnership(httpRequest, userId);
 
             int pendingCount = 0;

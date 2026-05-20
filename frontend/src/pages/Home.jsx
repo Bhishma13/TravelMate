@@ -12,7 +12,7 @@ function Home() {
     return (
         <div className="home-container" style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
 
-            {/* NAVBAR */}
+            {}
             <nav style={{
                 display: 'flex', justifyContent: 'space-between', alignItems: 'center',
                 padding: '1.2rem 4rem', borderBottom: '1px solid #e2e8f0',
@@ -38,13 +38,13 @@ function Home() {
                 </div>
             </nav>
 
-            {/* HERO */}
+            {}
             <div style={{
                 display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
                 padding: '6rem 4rem 4rem 4rem', maxWidth: '900px', margin: '0 auto', width: '100%',
                 textAlign: 'center'
             }}>
-                {/* Badge */}
+                {}
                 <div style={{
                     display: 'inline-flex', alignItems: 'center', gap: '0.4rem',
                     padding: '0.4rem 1rem', borderRadius: '50px',
@@ -67,7 +67,7 @@ function Home() {
                     Forget generic tours. Connect directly with expert local guides for authentic experiences, or find travelers who need your expertise.
                 </p>
 
-                {/* Search Bar */}
+                {}
                 <form onSubmit={handleSearch} style={{
                     display: 'flex', background: '#fff', border: '1.5px solid #e2e8f0',
                     borderRadius: '12px', padding: '0.4rem', maxWidth: '580px', width: '100%',
@@ -100,7 +100,7 @@ function Home() {
                 </div>
             </div>
 
-            {/* GUIDE CARDS PREVIEW */}
+            {}
             <div style={{ padding: '2rem 4rem 5rem 4rem', maxWidth: '1100px', margin: '0 auto', width: '100%' }}>
                 <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
                     {[
@@ -122,7 +122,7 @@ function Home() {
                 </div>
             </div>
 
-            {/* CATEGORY PILLS */}
+            {}
             <div style={{ padding: '0 4rem 5rem 4rem', maxWidth: '1100px', margin: '0 auto', width: '100%' }}>
                 <h2 style={{ fontSize: '1.8rem', marginBottom: '1.5rem', color: '#0f172a' }}>Browse by <span style={{ color: '#0d9488' }}>category</span></h2>
                 <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
@@ -138,7 +138,7 @@ function Home() {
                 </div>
             </div>
 
-            {/* FOR TRAVELERS / FOR GUIDES */}
+            {}
             <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1fr) minmax(0,1fr)', gap: '1.5rem', padding: '0 4rem 6rem 4rem', maxWidth: '1100px', margin: '0 auto', width: '100%' }}>
                 <div className="glass-panel" style={{ padding: '3rem', position: 'relative', overflow: 'hidden', display: 'flex', flexDirection: 'column', alignItems: 'flex-start' }}>
                     <div style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '4px', background: '#0d9488' }}></div>
@@ -175,7 +175,7 @@ function Home() {
                 </div>
             </div>
 
-            {/* FOOTER */}
+            {}
             <footer style={{
                 marginTop: 'auto', padding: '2.5rem 4rem',
                 borderTop: '1px solid #e2e8f0', display: 'flex',

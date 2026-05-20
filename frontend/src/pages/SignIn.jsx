@@ -14,7 +14,7 @@ function SignIn() {
 
     useEffect(() => {
         if (user) {
-            // If came from AI chatbot link, return to that page after login
+            
             const params = new URLSearchParams(location.search);
             const redirect = params.get('redirect');
             navigate(redirect || '/dashboard');
@@ -32,7 +32,7 @@ function SignIn() {
         }
 
         try {
-            await login({ email, password }); // Backend will return role
+            await login({ email, password }); 
         } catch (err) {
             setError(err.message);
         }

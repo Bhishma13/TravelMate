@@ -20,7 +20,7 @@ public class BookingRequest {
     private Long tripPostId;
 
     @Column(nullable = false)
-    private String status; // e.g., "PENDING", "ACCEPTED", "DECLINED"
+    private String status; 
 
     @Column(nullable = false)
     private String tripDates;
@@ -28,7 +28,7 @@ public class BookingRequest {
     @Column(nullable = true, length = 500)
     private String cancellationReason;
 
-    // Default constructor
+    
     public BookingRequest() {
         this.status = "PENDING";
     }
@@ -48,7 +48,7 @@ public class BookingRequest {
         this.status = "PENDING";
     }
 
-    // Getters and Setters
+    
     public Long getId() {
         return id;
     }

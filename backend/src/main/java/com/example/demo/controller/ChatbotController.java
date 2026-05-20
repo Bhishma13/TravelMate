@@ -11,16 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-/**
- * REST controller for the TravelMate AI chatbot.
- *
- * <p>POST /api/chatbot/ask — Main endpoint.
- * Request body: { "question": "...", "sessionId": "user-42" }
- *
- * <p>The sessionId is used by ChatMemory to scope conversation history.
- * Frontend should send the logged-in user's ID (as a string).
- * Anonymous users default to "anonymous" (shared history, not recommended for production).
- */
+
 @RestController
 @RequestMapping("/api/chatbot")
 public class ChatbotController {
@@ -40,7 +31,7 @@ public class ChatbotController {
                     .body(new ChatResponse("Please provide a question."));
         }
 
-        // Normalize sessionId — default to "anonymous" if missing or blank
+        
         String sessionId = (request.getSessionId() != null && !request.getSessionId().isBlank())
                 ? request.getSessionId()
                 : "anonymous";
@@ -49,9 +40,9 @@ public class ChatbotController {
         return ResponseEntity.ok(new ChatResponse(answer));
     }
 
-    // -------------------------------------------------------------------------
-    // Debug endpoint — retained for troubleshooting knowledge base indexing
-    // -------------------------------------------------------------------------
+    
+    
+    
 
     @Autowired
     private KnowledgeChunkRepository knowledgeChunkRepository;

@@ -28,7 +28,7 @@ public class TripPost {
     @Column(nullable = false, length = 1000)
     private String description;
 
-    // OPEN, IN_PROGRESS, FULFILLED, CANCELLED
+    
     @Column(nullable = false)
     private String status = "OPEN";
 

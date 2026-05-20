@@ -11,13 +11,7 @@ import org.springframework.stereotype.Component;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Spring AI Tool — lets Gemini search for open traveler trip posts by destination.
- *
- * <p>When a user asks "Are there any open trips to Goa?", Gemini calls this tool,
- * gets real data from the database, and includes direct deep links (/open-trips/{id})
- * so the user can click straight to the trip detail page and connect with the poster.
- */
+
 @Component
 public class OpenTripSearchTool {
 

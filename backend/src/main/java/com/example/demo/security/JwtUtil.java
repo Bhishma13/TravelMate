@@ -15,9 +15,9 @@ import java.util.function.Function;
 public class JwtUtil {
 
     private final Key secretKey;
-    private final long expirationTime = 1000 * 60 * 60 * 24; // 24 hours
+    private final long expirationTime = 1000 * 60 * 60 * 24; 
 
-    // We use a 64-byte default hex string so HS256 is satisfied properly
+    
     public JwtUtil(
             @Value("${jwt.secret:8a42f5d9c1b7a2e8c6f3d9a1b4e7c0df8a42f5d9c1b7a2e8c6f3d9a1b4e7c0df}") String secret) {
         this.secretKey = Keys.hmacShaKeyFor(secret.getBytes());

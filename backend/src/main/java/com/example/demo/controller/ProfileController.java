@@ -32,15 +32,15 @@ public class ProfileController {
     @Autowired
     private OwnershipValidator ownershipValidator;
 
-    // Create or update a guide's profile
-    // Security: You can only update YOUR OWN profile
+    
+    
     @PostMapping("/guide")
     public ResponseEntity<?> createOrUpdateGuideProfile(@RequestBody Map<String, Object> payload,
             HttpServletRequest httpRequest) {
 
         Long userId = Long.valueOf(payload.get("userId").toString());
 
-        // SECURITY: The logged-in user must match the userId in the request body
+        
         ownershipValidator.requireOwnership(httpRequest, userId);
 
         String location = (String) payload.get("location");
@@ -80,7 +80,7 @@ public class ProfileController {
         return ResponseEntity.ok(Map.of("message", "Profile updated successfully", "profile", profile));
     }
 
-    // Get a guide's public profile — viewable by anyone who is logged in
+    
     @GetMapping("/guide/{userId}")
     public ResponseEntity<?> getGuideProfile(@PathVariable Long userId) {
         Optional<User> user = userRepository.findById(userId);
@@ -94,15 +94,15 @@ public class ProfileController {
         return ResponseEntity.status(404).body("Profile not found");
     }
 
-    // Create or update a traveler's profile
-    // Security: You can only update YOUR OWN profile
+    
+    
     @PostMapping("/traveler")
     public ResponseEntity<?> createOrUpdateTravelerProfile(@RequestBody Map<String, Object> payload,
             HttpServletRequest httpRequest) {
 
         Long userId = Long.valueOf(payload.get("userId").toString());
 
-        // SECURITY: The logged-in user must match the userId in the request body
+        
         ownershipValidator.requireOwnership(httpRequest, userId);
 
         String location = (String) payload.get("location");
@@ -136,7 +136,7 @@ public class ProfileController {
         return ResponseEntity.ok(Map.of("message", "Profile updated successfully", "profile", profile));
     }
 
-    // Get a traveler's public profile — viewable by anyone who is logged in
+    
     @GetMapping("/traveler/{userId}")
     public ResponseEntity<?> getTravelerProfile(@PathVariable Long userId) {
         Optional<User> user = userRepository.findById(userId);
